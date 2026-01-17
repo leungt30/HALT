@@ -7,8 +7,9 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+import { PRODUCTS, BlockVariant } from './products';
+
 // --- Types ---
-type BlockVariant = 'single' | 'double' | 'flyer';
 
 interface LayoutItem {
     itemId: string;
@@ -88,8 +89,22 @@ app.get('/api/events', (req: Request, res: Response) => {
     });
 });
 
+app.get('/api/products', (req: Request, res: Response) => {
+    // Return list of products
+    const productList = Object.values(PRODUCTS);
+    res.json(productList);
+});
+
 app.get('/api/layout', (req: Request, res: Response) => {
-    res.json(currentLayout);
+    // Enrich layout items with product description
+    const enrichedLayout = currentLayout.map(item => {
+        const product = PRODUCTS[item.itemId];
+        return {
+            ...item,
+            description: product ? product.description : 'Unknown Product'
+        };
+    });
+    res.json(enrichedLayout);
 });
 
 app.post('/api/layout', (req: Request, res: Response) => {
