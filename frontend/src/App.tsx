@@ -1,5 +1,6 @@
+import { useEffect, useState } from 'react';
 import { StoreGrid } from './StoreGrid';
-import { INITIAL_LAYOUT } from './data';
+import { INITIAL_LAYOUT, type LayoutItem } from './data';
 import { CartProvider, useCart } from './CartContext';
 
 const Header = () => {
@@ -20,11 +21,32 @@ const Header = () => {
 };
 
 function App() {
+  const [layout, setLayout] = useState<LayoutItem[]>(INITIAL_LAYOUT);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('http://localhost:3000/api/layout')
+      .then(res => res.json())
+      .then(data => {
+        setLayout(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Failed to fetch layout:", err);
+        // Fallback to static initial layout
+        setLoading(false);
+      });
+  }, []);
+
   return (
     <CartProvider>
       <Header />
       <main>
-        <StoreGrid layout={INITIAL_LAYOUT} />
+        {loading ? (
+          <div style={{ textAlign: 'center', margin: '2rem' }}>Loading Store Config...</div>
+        ) : (
+          <StoreGrid layout={layout} />
+        )}
       </main>
     </CartProvider>
   );
