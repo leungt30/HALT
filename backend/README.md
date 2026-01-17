@@ -28,24 +28,46 @@ The server defaults to port `3000`.
 
 ## API Reference
 
+### Products
+
+#### `GET /api/products`
+Retrieves the full catalog of available products.
+
+**Response**
+Returns an array of product objects:
+```json
+[
+  {
+    "id": "p1",
+    "name": "Neon Cyber Jacket",
+    "price": 120.00,
+    "image": "...",
+    "description": "High-visibility streetwear..."
+  },
+  ...
+]
+```
+
 ### Layout Configuration
 
 The core resource is the `Layout` configuration, which defines which items are shown and in what format.
 
 #### `GET /api/layout`
-Retrieves the current layout configuration.
+Retrieves the current layout configuration, **enriched with product details**.
 
 **Response**
-Returns an array of layout objects:
+Returns an array of layout objects joined with product descriptions:
 ```json
 [
   {
     "itemId": "p1",
-    "variant": "flyer"
+    "variant": "flyer",
+    "description": "High-visibility streetwear..."
   },
   {
     "itemId": "p2",
-    "variant": "single"
+    "variant": "single",
+    "description": "Iridescent finish..."
   }
 ]
 ```
@@ -55,6 +77,7 @@ Returns an array of layout objects:
   - `single`: 1x1 standard block.
   - `double`: 2x1 wide block.
   - `flyer`: 4x1 full-width featured block.
+- **`description`**: The product description (helper field for AI context).
 
 #### `POST /api/layout`
 Updates the global layout configuration. This is intended to be used by the Store Manager AI agent to dynamically reorganize the shop.
