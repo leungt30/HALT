@@ -9,6 +9,14 @@ interface ProductCardProps {
 
 export const ProductCard: React.FC<ProductCardProps> = ({ item, variant }) => {
     const { addToCart } = useCart();
+    const [isAdded, setIsAdded] = React.useState(false);
+
+    const handleAdd = () => {
+        addToCart(item);
+        setIsAdded(true);
+        setTimeout(() => setIsAdded(false), 1000);
+    };
+
     const formatPrice = (price: number) => `$${price.toFixed(2)}`;
 
     if (variant === 'single') {
@@ -25,9 +33,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ item, variant }) => {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
                         <div className="price">{formatPrice(item.price)}</div>
                         <button
-                            onClick={() => addToCart(item)}
+                            onClick={handleAdd}
                             style={{
-                                background: 'var(--accent-color)',
+                                background: isAdded ? '#00ff88' : 'var(--accent-color)',
                                 border: 'none',
                                 borderRadius: '50%',
                                 width: '32px',
@@ -38,11 +46,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ item, variant }) => {
                                 cursor: 'pointer',
                                 color: '#000',
                                 fontSize: '1.2rem',
-                                padding: 0
+                                padding: 0,
+                                transition: 'background-color 0.2s',
+                                transform: isAdded ? 'scale(1.1)' : 'scale(1)'
                             }}
                             title="Add to Cart"
                         >
-                            +
+                            {isAdded ? '✓' : '+'}
                         </button>
                     </div>
                 </div>
@@ -61,18 +71,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({ item, variant }) => {
                     <p className="description">{item.description}</p>
                     <div className="price">{formatPrice(item.price)}</div>
                     <button
-                        onClick={() => addToCart(item)}
+                        onClick={handleAdd}
                         style={{
                             marginTop: '1rem',
                             padding: '10px 20px',
-                            background: 'var(--accent-color)',
+                            background: isAdded ? '#00ff88' : 'var(--accent-color)',
                             border: 'none',
                             borderRadius: '4px',
                             color: '#000',
                             fontWeight: 'bold',
-                            cursor: 'pointer'
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                            transform: isAdded ? 'scale(1.05)' : 'scale(1)'
                         }}>
-                        Add to Cart
+                        {isAdded ? 'Added!' : 'Add to Cart'}
                     </button>
                 </div>
             </div>
@@ -88,20 +100,22 @@ export const ProductCard: React.FC<ProductCardProps> = ({ item, variant }) => {
                     <p>{item.description}</p>
                     <div className="price" style={{ fontSize: '1.5rem', marginTop: '1rem' }}>{formatPrice(item.price)}</div>
                     <button
-                        onClick={() => addToCart(item)}
+                        onClick={handleAdd}
                         style={{
                             marginTop: '2rem',
                             padding: '12px 30px',
-                            background: 'var(--accent-color)',
+                            background: isAdded ? '#00ff88' : 'var(--accent-color)',
                             border: 'none',
                             borderRadius: '4px',
                             color: '#000',
                             fontWeight: 'bold',
                             fontSize: '1.1rem',
                             cursor: 'pointer',
-                            width: 'fit-content'
+                            width: 'fit-content',
+                            transition: 'all 0.2s',
+                            transform: isAdded ? 'scale(1.05)' : 'scale(1)'
                         }}>
-                        Add to Cart
+                        {isAdded ? 'Added in Cart!' : 'Add to Cart'}
                     </button>
                 </div>
             </div>
