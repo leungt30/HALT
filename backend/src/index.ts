@@ -7,7 +7,11 @@ import { getLayout, saveLayout, LayoutItem } from './models/Layout';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+app.use(cors({
+    origin: '*', // Allow all origins for now to fix the blockage
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 import { PRODUCTS } from './products';
