@@ -24,7 +24,7 @@ export const ITEMS: Record<string, Item> = {
     id: 'p1',
     name: 'Neon Cyber Jacket',
     price: 120.00,
-    image: 'https://images.unsplash.com/photo-1559583985-c80d8ad9b29f?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1595271444083-08084c6857c7?fm=jpg&q=60&w=3000&auto=format&fit=crop',
     description: 'High-visibility streetwear for the modern night.'
   },
   'p2': {
@@ -69,7 +69,7 @@ export const ITEMS: Record<string, Item> = {
     id: 'p7',
     name: 'Mechanical Keyboard',
     price: 150.00,
-    image: 'https://images.unsplash.com/photo-1587829741301-3a059d04aafc?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?auto=format&fit=crop&w=800&q=80',
     description: 'Clicky switches for the ultimate hacking experience.'
   },
   'p8': {
