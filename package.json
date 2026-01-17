@@ -1,11 +1,12 @@
 {
-  "name": "halt-monorepo",
-  "version": "0.0.0",
-  "private": true,
-  "workspaces": [
-    "customer-ai-agent",
-    "store-manager-ai",
-    "frontend"
-  ],
-  "scripts": {}
+    "name": "halt-monorepo",
+    "version": "0.0.0",
+    "private": true,
+    "workspaces": [
+        "customer-ai-agent",
+        "store-manager-ai",
+        "frontend",
+        "backend"
+    ],
+    "scripts": {}
 }
