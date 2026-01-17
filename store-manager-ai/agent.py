@@ -34,6 +34,24 @@ def get_ai_instructions(ai_client, prompt):
         logger.error("Error communicating with Gemini API: %s", str(e))
         return None
 
+# Function to retry AI layout generation
+def retry_get_ai_instructions(ai_client, prompt, retries=3):
+    for attempt in range(retries):
+        try:
+            response = ai_client.models.generate_content(
+                model="gemini-3-flash-preview", contents=prompt
+            )
+            return json.loads(response.text)  # Convert the response to JSON
+        except json.JSONDecodeError as e:
+            logger.error("Attempt %d: Failed to decode AI response as JSON: %s", attempt + 1, str(e))
+        except requests.exceptions.RequestException as e:
+            logger.error("Attempt %d: Error communicating with Gemini API: %s", attempt + 1, str(e))
+
+        logger.info("Retrying layout generation (Attempt %d/%d)...", attempt + 1, retries)
+
+    logger.error("All attempts to generate a valid layout have failed.")
+    return None
+
 def main():
     # Initialize the AI client and store connector
     store_manager_agent = genai.Client()
@@ -48,15 +66,14 @@ def main():
 
     # Generate a prompt with the current layout
     prompt = get_prompt(current_layout)
-    new_layout = get_ai_instructions(store_manager_agent, prompt)
+    new_layout = retry_get_ai_instructions(store_manager_agent, prompt)
     if not new_layout:
-        logger.error("Failed to generate a valid layout from the AI response.")
+        logger.error("Failed to generate a valid layout after retries.")
         return
 
     logger.info("AI Suggested Layout: %s", new_layout)
 
     # Ensure the new layout is a JSON object
-    # TODO add retry logic 
     if isinstance(new_layout, dict) or isinstance(new_layout, list):
         logger.info("The new layout is a valid JSON object.")
     else:
@@ -66,14 +83,14 @@ def main():
         except json.JSONDecodeError as e:
             logger.error("Failed to convert the new layout string to JSON: %s", str(e))
             return
-    
+
     # TODO Update the layout on the backend - backend doesn't really work for now 
     # update_response = store_connector.update_layout(new_layout)
     # if update_response and update_response.get("success"):
     #     logger.info("Layout updated successfully.")
     # else:
     #     logger.error("Failed to update the layout.")
-    
+
     # # Dump the new layout to a JSON file for testing
     # dump_layout_to_file(new_layout)
 
