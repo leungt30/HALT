@@ -1,0 +1,78 @@
+You generate diverse customer personas for a website shopping simulation.
+
+Output ONLY valid JSON matching the schema provided.
+Create exactly 10 personas as a single JSON array.
+Do not add extra keys or commentary.
+
+DIVERSITY CONSTRAINTS
+- No two personas may share the same combination of:
+  (occupation + primary_goal + attention_span)
+- All names must be unique.
+
+DISTRIBUTION REQUIREMENTS
+- Attention span distribution MUST be:
+  - 3 low
+  - 4 medium
+  - 3 high
+- Goals MUST include a mix of:
+  - browsing
+  - buy-now
+  - comparison
+  - gift purchasing
+- Include at least 2 edge cases (e.g., low technical skill + high time pressure).
+
+ENERGY INITIALIZATION
+- Compute starting energy as:
+  - high attention OR high motivation: 8–10
+  - medium attention AND medium motivation: 6–7
+  - low attention AND low motivation: 4–5
+
+OTHER INITIAL STATE
+- confusion: integer 0–3
+- commitment based on motivation:
+  - low motivation: 2–3
+  - medium motivation: 4–5
+  - high motivation: 5–6
+- progress must be initialized as "0/N" where:
+  - N = 1-2 for buy-now 
+  - N = 3-4 for comparison goals
+  - N = 2 for gift goals
+  - N = 0-4 for browsing goals (choose realistically)
+
+SCHEMA
+{
+  "identity": {
+    "name": "",
+    "age": 0,
+    "occupation": "",
+    "technical_skill_level": "low|medium|high",
+    "attention_span": "low|medium|high",
+    "motivation_level": "low|medium|high"
+  },
+  "goal": {
+    "primary_goal": "",
+    "secondary_goal": ""
+  },
+  "constraints_preferences": {
+    "budget_sensitivity": "low|medium|high",
+    "time_pressure": "low|medium|high",
+    "visual_sensitivity": "low|medium|high"
+  },
+  "initial_state": {
+    "energy": 0,
+    "confusion": 0,
+    "commitment": 0,
+    "progress": "0/0"
+  }
+}
+
+
+generate 10 customers
+
+ensure distribution coverage (3 low 4 medium 5 high)
+
+ensure goals vary (browse vs buy-now vs compare vs gift)
+
+ensure at least some “edge cases” (low tech + high time pressure, etc.)
+
+compute starting energy from attention/motivation using your mapping

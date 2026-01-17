@@ -1,0 +1,25 @@
+{
+  "identity": {
+    "name": "",
+    "age": 0,
+    "occupation": "",
+    "technical_skill_level": "low|medium|high",
+    "attention_span": "low|medium|high",
+    "motivation_level": "low|medium|high"
+  },
+  "goal": {
+    "primary_goal": "",
+    "secondary_goal": ""
+  },
+  "constraints_preferences": {
+    "budget_sensitivity": "low|medium|high",
+    "time_pressure": "low|medium|high",
+    "visual_sensitivity": "low|medium|high"
+  },
+  "initial_state": {
+    "energy": 0,
+    "confusion": 0,
+    "commitment": 0,
+    "progress": "0/0"
+  }
+}
