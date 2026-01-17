@@ -20,6 +20,8 @@ body {
   max-width: 1400px;
   margin: 0 auto;
   padding: 2rem;
+  padding-top: 6rem;
+  /* Add space for fixed header */
 }
 
 .site-header {
@@ -27,8 +29,17 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
-  padding-bottom: 1rem;
+  padding: 1rem 2rem;
   border-bottom: 1px solid #333;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(10, 10, 10, 0.85);
+  /* Semi-transparent background */
+  backdrop-filter: blur(10px);
+  /* Glassmorphism blur */
+  z-index: 1000;
 }
 
 .cart-icon {
