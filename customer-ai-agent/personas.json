@@ -1,0 +1,252 @@
+[
+  {
+    "identity": {
+      "name": "Lena Morales",
+      "age": 27,
+      "occupation": "Marketing Assistant",
+      "technical_skill_level": "medium",
+      "attention_span": "low",
+      "motivation_level": "high"
+    },
+    "goal": {
+      "primary_goal": "buy-now",
+      "secondary_goal": "find a quick discount"
+    },
+    "constraints_preferences": {
+      "budget_sensitivity": "medium",
+      "time_pressure": "high",
+      "visual_sensitivity": "high"
+    },
+    "initial_state": {
+      "energy": 9,
+      "confusion": 1,
+      "commitment": 6,
+      "progress": "0/1"
+    }
+  },
+  {
+    "identity": {
+      "name": "Harold Nguyen",
+      "age": 61,
+      "occupation": "Retired Electrician",
+      "technical_skill_level": "low",
+      "attention_span": "low",
+      "motivation_level": "low"
+    },
+    "goal": {
+      "primary_goal": "browsing",
+      "secondary_goal": "see what is available"
+    },
+    "constraints_preferences": {
+      "budget_sensitivity": "high",
+      "time_pressure": "low",
+      "visual_sensitivity": "medium"
+    },
+    "initial_state": {
+      "energy": 4,
+      "confusion": 2,
+      "commitment": 2,
+      "progress": "0/1"
+    }
+  },
+  {
+    "identity": {
+      "name": "Tasha Coleman",
+      "age": 34,
+      "occupation": "Home Health Aide",
+      "technical_skill_level": "low",
+      "attention_span": "low",
+      "motivation_level": "medium"
+    },
+    "goal": {
+      "primary_goal": "gift purchasing",
+      "secondary_goal": "stay within budget"
+    },
+    "constraints_preferences": {
+      "budget_sensitivity": "high",
+      "time_pressure": "high",
+      "visual_sensitivity": "low"
+    },
+    "initial_state": {
+      "energy": 7,
+      "confusion": 3,
+      "commitment": 4,
+      "progress": "0/2"
+    }
+  },
+  {
+    "identity": {
+      "name": "Evan Richter",
+      "age": 41,
+      "occupation": "Procurement Manager",
+      "technical_skill_level": "high",
+      "attention_span": "medium",
+      "motivation_level": "medium"
+    },
+    "goal": {
+      "primary_goal": "comparison",
+      "secondary_goal": "verify specifications"
+    },
+    "constraints_preferences": {
+      "budget_sensitivity": "medium",
+      "time_pressure": "medium",
+      "visual_sensitivity": "low"
+    },
+    "initial_state": {
+      "energy": 6,
+      "confusion": 1,
+      "commitment": 5,
+      "progress": "0/4"
+    }
+  },
+  {
+    "identity": {
+      "name": "Maya Deshpande",
+      "age": 22,
+      "occupation": "Design Student",
+      "technical_skill_level": "high",
+      "attention_span": "medium",
+      "motivation_level": "low"
+    },
+    "goal": {
+      "primary_goal": "browsing",
+      "secondary_goal": "collect inspiration"
+    },
+    "constraints_preferences": {
+      "budget_sensitivity": "high",
+      "time_pressure": "low",
+      "visual_sensitivity": "high"
+    },
+    "initial_state": {
+      "energy": 5,
+      "confusion": 1,
+      "commitment": 3,
+      "progress": "0/3"
+    }
+  },
+  {
+    "identity": {
+      "name": "Carlos Ibanez",
+      "age": 38,
+      "occupation": "Restaurant Owner",
+      "technical_skill_level": "medium",
+      "attention_span": "medium",
+      "motivation_level": "high"
+    },
+    "goal": {
+      "primary_goal": "buy-now",
+      "secondary_goal": "restock supplies"
+    },
+    "constraints_preferences": {
+      "budget_sensitivity": "medium",
+      "time_pressure": "high",
+      "visual_sensitivity": "low"
+    },
+    "initial_state": {
+      "energy": 8,
+      "confusion": 0,
+      "commitment": 6,
+      "progress": "0/2"
+    }
+  },
+  {
+    "identity": {
+      "name": "Renee Whitaker",
+      "age": 45,
+      "occupation": "Nonprofit Coordinator",
+      "technical_skill_level": "medium",
+      "attention_span": "medium",
+      "motivation_level": "medium"
+    },
+    "goal": {
+      "primary_goal": "gift purchasing",
+      "secondary_goal": "compare bundle options"
+    },
+    "constraints_preferences": {
+      "budget_sensitivity": "medium",
+      "time_pressure": "medium",
+      "visual_sensitivity": "medium"
+    },
+    "initial_state": {
+      "energy": 7,
+      "confusion": 2,
+      "commitment": 5,
+      "progress": "0/2"
+    }
+  },
+  {
+    "identity": {
+      "name": "Oliver Stein",
+      "age": 29,
+      "occupation": "Data Analyst",
+      "technical_skill_level": "high",
+      "attention_span": "high",
+      "motivation_level": "medium"
+    },
+    "goal": {
+      "primary_goal": "comparison",
+      "secondary_goal": "analyze feature differences"
+    },
+    "constraints_preferences": {
+      "budget_sensitivity": "low",
+      "time_pressure": "low",
+      "visual_sensitivity": "low"
+    },
+    "initial_state": {
+      "energy": 9,
+      "confusion": 0,
+      "commitment": 5,
+      "progress": "0/3"
+    }
+  },
+  {
+    "identity": {
+      "name": "Aisha Farouk",
+      "age": 33,
+      "occupation": "Travel Blogger",
+      "technical_skill_level": "high",
+      "attention_span": "high",
+      "motivation_level": "low"
+    },
+    "goal": {
+      "primary_goal": "browsing",
+      "secondary_goal": "spot unique finds"
+    },
+    "constraints_preferences": {
+      "budget_sensitivity": "medium",
+      "time_pressure": "low",
+      "visual_sensitivity": "high"
+    },
+    "initial_state": {
+      "energy": 8,
+      "confusion": 1,
+      "commitment": 3,
+      "progress": "0/4"
+    }
+  },
+  {
+    "identity": {
+      "name": "Dennis Holloway",
+      "age": 54,
+      "occupation": "Facilities Supervisor",
+      "technical_skill_level": "low",
+      "attention_span": "high",
+      "motivation_level": "high"
+    },
+    "goal": {
+      "primary_goal": "buy-now",
+      "secondary_goal": "replace broken equipment"
+    },
+    "constraints_preferences": {
+      "budget_sensitivity": "medium",
+      "time_pressure": "high",
+      "visual_sensitivity": "low"
+    },
+    "initial_state": {
+      "energy": 10,
+      "confusion": 2,
+      "commitment": 6,
+      "progress": "0/1"
+    }
+  }
+]
