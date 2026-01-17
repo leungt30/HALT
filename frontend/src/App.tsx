@@ -23,20 +23,47 @@ const Header = () => {
 function App() {
   const [layout, setLayout] = useState<LayoutItem[]>(INITIAL_LAYOUT);
   const [loading, setLoading] = useState(true);
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
   useEffect(() => {
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    // Fetch initial layout
     fetch(`${API_URL}/api/layout`)
-      .then(res => res.json())
-      .then(data => {
-        setLayout(data);
-        setLoading(false);
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
       })
-      .catch(err => {
-        console.error("Failed to fetch layout:", err);
-        // Fallback to static initial layout
+      .then(initialLayout => {
+        setLayout(initialLayout);
+        setLoading(false);
+        console.log('Initial layout fetched');
+      })
+      .catch(error => {
+        console.error('Failed to fetch initial layout:', error);
         setLoading(false);
       });
+
+    // Subscribe to SSE for real-time layout updates
+    const eventSource = new EventSource(`${API_URL}/api/events`);
+
+    eventSource.onmessage = (event) => {
+      try {
+        const newLayout = JSON.parse(event.data);
+        setLayout(newLayout);
+        setLoading(false);
+        console.log('Layout updated via SSE push');
+      } catch (err) {
+        console.error('Failed to parse SSE data:', err);
+      }
+    };
+
+    eventSource.onerror = (err) => {
+      console.error('SSE connection error:', err);
+      setLoading(false);
+    };
+
+    return () => eventSource.close();
   }, []);
 
   return (

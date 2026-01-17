@@ -50,7 +50,43 @@ let currentLayout: LayoutItem[] = [
     { itemId: 'p10', variant: 'flyer' },
 ];
 
+// --- SSE Client Management ---
+const sseClients: Response[] = [];
+
+function broadcastLayoutUpdate() {
+    const data = JSON.stringify(currentLayout);
+    sseClients.forEach(client => {
+        client.write(`data: ${data}\n\n`);
+    });
+    console.log(`Broadcast layout update to ${sseClients.length} clients`);
+}
+
 // --- Routes ---
+
+// SSE endpoint for real-time layout updates
+app.get('/api/events', (req: Request, res: Response) => {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.flushHeaders();
+
+    // Send initial layout
+    res.write(`data: ${JSON.stringify(currentLayout)}\n\n`);
+
+    // Add to clients list
+    sseClients.push(res);
+    console.log(`SSE client connected. Total: ${sseClients.length}`);
+
+    // Remove client on disconnect
+    req.on('close', () => {
+        const index = sseClients.indexOf(res);
+        if (index !== -1) {
+            sseClients.splice(index, 1);
+        }
+        console.log(`SSE client disconnected. Total: ${sseClients.length}`);
+    });
+});
 
 app.get('/api/layout', (req: Request, res: Response) => {
     res.json(currentLayout);
@@ -61,9 +97,12 @@ app.post('/api/layout', (req: Request, res: Response) => {
     if (!Array.isArray(newLayout)) {
         return res.status(400).json({ error: 'Layout must be an array' });
     }
-    // Basic validation could go here
     currentLayout = newLayout;
     console.log('Layout updated via API');
+
+    // Broadcast to all SSE clients
+    broadcastLayoutUpdate();
+
     res.json({ success: true, count: currentLayout.length });
 });
 
