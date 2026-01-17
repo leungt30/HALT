@@ -12,7 +12,9 @@ logger = logging.getLogger(__name__)
 def get_prompt(current_layout):
     return f'''
     You are an AI assistant for managing store layouts. Your task is to analyze the current layout of items in the store and provide optimized layout instructions to improve customer experience and profits.
-    Consider factors such as item placement, variety of item variants, and overall arrangement. Here is the current layout:
+    Consider factors such as item placement, variety of item variants, and overall arrangement. 
+    
+    Here is the current layout:
     {current_layout}
     
     Provide an optimized layout in JSON format similar to this example:
@@ -24,7 +26,7 @@ def get_prompt(current_layout):
 
     Only return the JSON array without any additional text.
 
-    Only include 2 items
+    Each row in the layout looks good if the total number is divisible by 4, i.e. 4 singles, 2 doubles or 1 flyer. Arrange items to meet this requirement as much as possible.
     '''
 
 # helper function for testing layout
