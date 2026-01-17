@@ -23,7 +23,13 @@ const Header = () => {
 function App() {
   const [layout, setLayout] = useState<LayoutItem[]>(INITIAL_LAYOUT);
   const [loading, setLoading] = useState(true);
+  const [visibleCount, setVisibleCount] = useState(8);
+  const PAGE_SIZE = 8;
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
+  const handleSeeMore = () => {
+    setVisibleCount(prev => prev + PAGE_SIZE);
+  };
 
   useEffect(() => {
     // Fetch initial layout
@@ -73,7 +79,16 @@ function App() {
         {loading ? (
           <div style={{ textAlign: 'center', margin: '2rem' }}>Loading Store Config...</div>
         ) : (
-          <StoreGrid layout={layout} />
+          <>
+            <StoreGrid layout={layout.slice(0, visibleCount)} />
+            {visibleCount < layout.length && (
+              <div className="see-more-container">
+                <button className="see-more-btn" onClick={handleSeeMore}>
+                  See More
+                </button>
+              </div>
+            )}
+          </>
         )}
       </main>
     </CartProvider>

@@ -65,9 +65,9 @@ body {
 }
 
 .store-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-auto-rows: minmax(300px, auto);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: var(--grid-gap);
   width: 100%;
 }
@@ -81,6 +81,8 @@ body {
   transition: transform 0.2s, box-shadow 0.2s;
   display: flex;
   flex-direction: column;
+  min-height: 250px;
+  /* replicate grid minmax */
 }
 
 .store-block:hover {
@@ -88,17 +90,17 @@ body {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
-/* Grid Spans */
+/* Flex Spans */
 .span-1 {
-  grid-column: span 1;
+  width: calc(25% - (var(--grid-gap) * 3 / 4));
 }
 
 .span-2 {
-  grid-column: span 2;
+  width: calc(50% - (var(--grid-gap) / 2));
 }
 
 .span-4 {
-  grid-column: span 4;
+  width: 100%;
 }
 
 /* Variant Styles */
@@ -128,7 +130,7 @@ body {
 
 .single-content .info {
   flex: 1;
-  padding: 1rem;
+  padding: 0.75rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -154,7 +156,7 @@ body {
 
 .double-content .info {
   flex: 1;
-  padding: 2rem;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -168,7 +170,7 @@ body {
 /* Flyer (4x1) - Hero Layout */
 .flyer-content {
   height: 100%;
-  min-height: 400px;
+  min-height: 350px;
   position: relative;
 }
 
@@ -231,27 +233,58 @@ h3 {
 }
 
 @media (max-width: 1024px) {
-  .store-grid {
-    grid-template-columns: repeat(2, 1fr);
+
+  /* Tablet: 2 columns */
+  .span-1 {
+    width: calc(50% - (var(--grid-gap) / 2));
   }
 
+  .span-2,
   .span-4 {
-    grid-column: span 2;
+    width: 100%;
   }
 }
 
 @media (max-width: 600px) {
-  .store-grid {
-    grid-template-columns: 1fr;
-  }
 
+  /* Mobile: 1 column */
   .span-1,
   .span-2,
   .span-4 {
-    grid-column: span 1;
+    width: 100%;
   }
 
   .double-content {
     flex-direction: column;
   }
+}
+
+/* See More Button */
+.see-more-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+  margin-bottom: 2rem;
+}
+
+.see-more-btn {
+  background-color: rgba(0, 240, 255, 0.1);
+  color: var(--accent-color);
+  border: 1px solid var(--accent-color);
+  padding: 12px 32px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.see-more-btn:hover {
+  background-color: var(--accent-color);
+  color: #000;
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+  transform: translateY(-2px);
 }
