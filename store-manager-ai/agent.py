@@ -84,14 +84,13 @@ def main():
             logger.error("Failed to convert the new layout string to JSON: %s", str(e))
             return
 
-    # TODO Update the layout on the backend - backend doesn't really work for now 
-    # update_response = store_connector.update_layout(new_layout)
-    # if update_response and update_response.get("success"):
-    #     logger.info("Layout updated successfully.")
-    # else:
-    #     logger.error("Failed to update the layout.")
+    update_response = store_connector.update_layout(new_layout)
+    if update_response and update_response.get("success"):
+        logger.info("Layout updated successfully.")
+    else:
+        logger.error("Failed to update the layout.")
 
-    # # Dump the new layout to a JSON file for testing
+    # Dump the new layout to a JSON file for testing
     # dump_layout_to_file(new_layout)
 
 if __name__ == "__main__":
