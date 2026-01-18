@@ -2,7 +2,7 @@ import 'dotenv/config';
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { connectToDatabase } from './db';
-import { getLayout, saveLayout, LayoutItem } from './models/Layout';
+import { getLayout, saveLayout, setFlag, getLayoutHistory, LayoutItem, LayoutDocument } from './models/Layout';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -97,6 +97,38 @@ app.post('/api/layout', async (req: Request, res: Response) => {
     } catch (error) {
         console.error('Error saving layout:', error);
         res.status(500).json({ error: 'Failed to save layout' });
+    }
+});
+
+app.post('/api/flags', async (req: Request, res: Response) => {
+    const { flag } = req.body;
+    if (!flag || typeof flag !== 'string') {
+        return res.status(400).json({ error: 'Flag must be a non-empty string' });
+    }
+
+    try {
+        const success = await setFlag(flag);
+        if (success) {
+            console.log(`Flag '${flag}' set on latest layout`);
+            res.json({ success: true, flag });
+        } else {
+            res.status(404).json({ error: 'No layout found to flag' });
+        }
+    } catch (error) {
+        console.error('Error setting flag:', error);
+        res.status(500).json({ error: 'Failed to set flag' });
+    }
+});
+
+app.get('/api/layouts/history', async (req: Request, res: Response) => {
+    const flag = req.query.flag as string | undefined;
+
+    try {
+        const history = await getLayoutHistory(flag);
+        res.json(history);
+    } catch (error) {
+        console.error('Error fetching layout history:', error);
+        res.status(500).json({ error: 'Failed to fetch layout history' });
     }
 });
 

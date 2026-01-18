@@ -103,3 +103,53 @@ Must be a JSON array of layout objects.
 - Body must be a valid JSON array.
 - Invalid item IDs will be ignored by the frontend (but stored).
 - Invalid variants will fallback to default or generic rendering on the frontend.
+
+### Layout History & Flags
+
+#### `POST /api/flags`
+Tags the current (latest) layout with a specific flag name. This marks a significant version or checkpoint in the layout history.
+
+**Request Body**
+```json
+{
+  "flag": "v1.0-launch"
+}
+```
+
+**Response**
+```json
+{
+  "success": true,
+  "flag": "v1.0-launch"
+}
+```
+
+#### `GET /api/layouts/history`
+Retrieves a segment of the layout history based on flags.
+
+**Query Parameters**
+- `flag` (optional): The starting flag for the history segment.
+
+**Behavior**
+- If `flag` is **omitted**: Returns all layouts from the **latest** version back to the **most recent flag**.
+- If `flag` is **provided**: Returns all layouts between the specified `flag` (inclusive) and the **next newer flag** (or the latest version if no newer flag exists).
+
+**Response**
+Returns an array of layout documents, where each document contains:
+- `items`: The layout configuration array.
+- `createdAt`: Timestamp of creation.
+- `flag`: The flag string (if present).
+
+```json
+[
+  {
+    "items": [...],
+    "createdAt": "2024-05-20T10:00:00.000Z",
+    "flag": "v1.1-update"
+  },
+  {
+    "items": [...],
+    "createdAt": "2024-05-20T09:30:00.000Z"
+  }
+]
+```
