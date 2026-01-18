@@ -7,6 +7,7 @@ requires-python = ">=3.13"
 dependencies = [
     "browser-use>=0.11.3",
     "dotenv>=0.9.9",
+    "flask>=3.1.2",
     "google-genai>=1.59.0",
     "requests>=2.32.5",
 ]

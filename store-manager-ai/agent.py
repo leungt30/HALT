@@ -1,24 +1,19 @@
 import requests
 import os
 from google import genai
-import logging
+from logger.logger import logger
 from store_connector.store_connector import StoreConnector
 from utilities import *
 import json
+import time
 
 # testing code locally
-# import dotenv
-# dotenv.load_dotenv()
-
-# Set up logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+import dotenv
+dotenv.load_dotenv()
 
 MODEL_API_KEY = os.environ.get("API_KEY")
 API_URL = "https://api.halt-hack.tech/"
+LOCAL_API_URL = "http://localhost:8080/"
 
 # Function to prompt the AI model using Gemini API
 def get_ai_instructions(ai_client, prompt):
@@ -52,6 +47,34 @@ def retry_get_ai_instructions(ai_client, prompt, retries=3):
     logger.error("All attempts to generate a valid layout have failed.")
     return None
 
+# Pulling logic for customer session data
+def wait_for_customer_sessions(timeout=300, interval=20):
+    """
+    Waits for customer session data to be collected.
+    This is a placeholder function and should be replaced with actual logic to check for session data.
+    """
+    logger.info("Waiting for customer session data...")
+    start_time = time.time()
+    while time.time() - start_time < timeout:
+        try:
+            response = requests.get(f"{LOCAL_API_URL}/customer_sessions")
+            if response.status_code == 200:
+                sessions = response.json()
+                if sessions:  # Check if there is any session data
+                    logger.info("Customer session data collected: %s", sessions)
+                    return sessions
+            else:
+                logger.warning("Failed to fetch customer sessions: %s", response.text)
+        except requests.exceptions.RequestException as e:
+            logger.error("Error while polling customer sessions: %s", str(e))
+        
+        logger.info("No customer session data yet. Retrying in %d seconds...", interval)
+        time.sleep(interval)
+
+    logger.error("Timeout reached while waiting for customer session data.")
+    return None
+
+
 def main():
     # Initialize the AI client and store connector
     store_manager_agent = genai.Client()
@@ -63,6 +86,13 @@ def main():
         logger.error("Failed to fetch the current layout.")
         return
     logger.info("Current Layout: %s", current_layout)
+
+    # Wait for customer session data to be collected
+    customer_data = wait_for_customer_sessions()
+    if not customer_data:
+        logger.error("Failed to collect customer session data. Exiting.")
+        return
+    logger.info("Customer Session Data: %s", customer_data)
 
     # Generate a prompt with the current layout
     prompt = get_prompt(current_layout)
