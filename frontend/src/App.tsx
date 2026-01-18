@@ -1,23 +1,47 @@
 import { useEffect, useState } from 'react';
 import { StoreGrid } from './StoreGrid';
-import { INITIAL_LAYOUT, type LayoutItem } from './data';
+import { INITIAL_LAYOUT, type LayoutItem, type CategoryLayoutItem, isCategory } from './data';
 import { CartProvider, useCart } from './CartContext';
 import { CartDrawer } from './CartDrawer';
 import { OrderConfirmation } from './OrderConfirmation';
 
-const Header = ({ onOpenCart }: { onOpenCart: () => void }) => {
+interface HeaderProps {
+  onOpenCart: () => void;
+  categories: CategoryLayoutItem[];
+  onCategoryClick: (id: string) => void;
+}
+
+const Header = ({ onOpenCart, categories, onCategoryClick }: HeaderProps) => {
   const { count } = useCart();
   return (
     <header className="site-header">
-      <h1 style={{ color: 'var(--accent-color)', fontSize: '2.5rem', margin: 0 }}>HALT // STORE</h1>
-      <div className="cart-icon" onClick={onOpenCart}>
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="9" cy="21" r="1"></circle>
-          <circle cx="20" cy="21" r="1"></circle>
-          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-        </svg>
-        <span className="cart-count">{count}</span>
+      <div className="header-top">
+        <h1 style={{ color: 'var(--accent-color)', fontSize: '2.5rem', margin: 0 }}>HALT // STORE</h1>
+        <div className="cart-icon" onClick={onOpenCart}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          <span className="cart-count">{count}</span>
+        </div>
       </div>
+      {categories.length > 0 && (
+        <nav className="category-nav">
+          {categories.map((cat) => (
+            <a
+              key={cat.id}
+              href={`#${cat.id}`}
+              onClick={(e) => {
+                e.preventDefault();
+                onCategoryClick(cat.id);
+              }}
+            >
+              {cat.name}
+            </a>
+          ))}
+        </nav>
+      )}
     </header>
   );
 };
@@ -34,6 +58,33 @@ function App() {
 
   const handleSeeMore = () => {
     setVisibleCount(prev => prev + PAGE_SIZE);
+  };
+
+  const handleCategoryClick = (id: string) => {
+    const index = layout.findIndex(item => isCategory(item) && item.id === id);
+    if (index !== -1) {
+      if (index >= visibleCount) {
+        // Expand enough to show this category + some buffer
+        setVisibleCount(prev => Math.max(prev, index + PAGE_SIZE));
+      }
+
+      // Allow render cycle to update DOM before scrolling
+      setTimeout(() => {
+        const element = document.getElementById(id);
+        const header = document.querySelector('.site-header');
+
+        if (element && header) {
+          const headerOffset = header.getBoundingClientRect().height + 20; // safe buffer
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.scrollY - headerOffset;
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth"
+          });
+        }
+      }, 100);
+    }
   };
 
   useEffect(() => {
@@ -77,9 +128,16 @@ function App() {
     return () => eventSource.close();
   }, []);
 
+  // Extract categories from layout for navbar
+  const categories = layout.filter(isCategory);
+
   return (
     <CartProvider>
-      <Header onOpenCart={() => setIsCartOpen(true)} />
+      <Header
+        onOpenCart={() => setIsCartOpen(true)}
+        categories={categories}
+        onCategoryClick={handleCategoryClick}
+      />
       <CartDrawer
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}

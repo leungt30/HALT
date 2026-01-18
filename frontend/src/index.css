@@ -20,7 +20,7 @@ body {
   max-width: 1400px;
   margin: 0 auto;
   padding: 2rem;
-  padding-top: 6rem;
+  padding-top: 11rem;
   /* Add space for fixed header */
 }
 
@@ -493,6 +493,112 @@ h3 {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Category Headers */
+.category-header {
+  width: 100%;
+  padding: 0.35rem 0.5rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+  margin-bottom: 0.35rem;
+  scroll-margin-top: 11rem;
+  /* Offset for fixed header when navigating */
+}
+
+.category-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--accent-color);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.category-header h2::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 1rem;
+  background: linear-gradient(180deg, var(--accent-color), transparent);
+  border-radius: 2px;
+}
+
+/* Category Navbar Links */
+.category-nav {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.75rem 1rem;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.category-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.category-nav a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+}
+
+.category-nav a::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(0, 180, 255, 0.1));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.category-nav a:hover {
+  color: var(--accent-color);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.3), inset 0 0 15px rgba(0, 240, 255, 0.05);
+  transform: translateY(-1px);
+}
+
+.category-nav a:hover::before {
+  opacity: 1;
+}
+
+.category-nav a:active {
+  transform: translateY(0);
+}
+
+/* Adjust header for category nav */
+.site-header {
+  flex-wrap: wrap;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
