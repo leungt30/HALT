@@ -20,6 +20,8 @@ def get_prompt(current_layout):
     Only return the JSON array without any additional text.
 
     Each row in the layout looks good if the total number is divisible by 4, i.e. 4 singles, 2 doubles or 1 flyer. Arrange items to meet this requirement as much as possible.
+
+    I want all 50 items in the page to be present in the new layout, but feel free to change their variants (single, double, flyer) and their order to optimize the layout.
     '''
 
 def get_optimization_prompt(current_layout, feedback_summary, average_score):
