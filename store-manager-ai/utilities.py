@@ -28,6 +28,10 @@ def get_optimization_prompt(current_layout, feedback_summary, average_score, cus
     return f'''
     You are an AI Store Manager optimizing a retail website layout.
     
+    CONTEXT:
+    - **SEASON:** Valentine's Day Season
+    - **GOAL:** Optimize the store layout for gift shoppers shopping for valentine's day or anytime during that season.
+
     Your goal is to improve Customer Satisfaction (current average: {average_score}/10).
     Target score: > 8.0/10.
 
@@ -44,11 +48,11 @@ def get_optimization_prompt(current_layout, feedback_summary, average_score, cus
     1. Analyze customer actions to identify:
        - Frequently viewed or purchased items (promote these items).
        - Items that customers abandoned or ignored (reposition or replace these items).
-       - Patterns in customer browsing behavior (e.g., confusion
+       - Patterns in customer browsing behavior.
     2. Analyze the customer feedback to identify friction points (e.g., "confusion", "couldn't find items", "no bundles").
-    3. Modify the layout to address these issues.
+    3. Modify the layout to address these issues AND the seasonal context.
        - If they want bundles, add "flyer" or "double" variants.
-       - If they are confused/scrolling too much, maybe group similar items using CATEGORIES.
+       - If they are confused/scrolling too much, group similar items using CATEGORIES.
        - "single" takes 1 slot. "double" takes 2 slots. "flyer" takes 4 slots.
     4. CATEGORY HEADERS:
        - You can insert category headers to organize sections.

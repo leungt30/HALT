@@ -6,6 +6,7 @@ from store_connector.store_connector import StoreConnector
 from utilities import *
 import json
 import time
+import re
 
 # testing code locally
 import dotenv
@@ -21,6 +22,9 @@ def get_ai_instructions(ai_client, prompt):
         response = ai_client.models.generate_content(
         model="gemini-3-flash-preview", contents=prompt
         )
+        if not response.text:
+             logger.error("Received empty response from AI model.")
+             return None
         return json.loads(response.text)  # Convert the response to JSON
     except json.JSONDecodeError as e:
         logger.error("Failed to decode AI response as JSON: %s", str(e))
@@ -38,6 +42,10 @@ def retry_get_ai_instructions(ai_client, prompt, retries=3):
             )
             # Handle potential markdown code blocks in response
             text = response.text
+            if not text:
+                logger.warning(f"Attempt {attempt + 1}: Received empty response from AI model.")
+                continue
+
             if text.startswith("```json"):
                 text = text[7:]
             if text.endswith("```"):
@@ -116,18 +124,25 @@ def analyze_results(sim_results, iteration=0):
                 
             # If the agent returned a stringified JSON, parse it
             if isinstance(fb_raw, str):
-                try:
-                    fb = json.loads(fb_raw)
-                except:
-                    # Fallback if it's just a text blob (which shouldn't happen with our strict prompt)
-                    logger.warning(f"Could not parse feedback JSON")
+                try:           
+                    json_match = re.search(r'\{.*\}', fb_raw, re.DOTALL)
+                    if json_match:
+                        json_str = json_match.group(0)
+                        fb = json.loads(json_str)
+                    else:
+                        # Try parsing the whole thing if no braces found (unlikely to work but fallback)
+                        fb = json.loads(fb_raw)
+                except Exception as e:
+                    # Detailed logging for debugging
+                    logger.warning(f"Could not parse feedback JSON string: {e}")
+                    logger.warning(f"Raw string content: {fb_raw[:500]}...") # Log first 500 chars
                     continue
             else:
                 fb = fb_raw
             
             # Skip if feedback is empty or malformed
             if not fb or not isinstance(fb, dict):
-                logger.warning(f"Skipping malformed feedback")
+                logger.warning(f"Skipping malformed feedback object: {type(fb)} - {fb}")
                 continue
             
             # Clean up score (might be "8" or "8/10")

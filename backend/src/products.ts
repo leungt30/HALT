@@ -22,35 +22,35 @@ export const PRODUCTS: Record<string, Item> = {
         id: 'p2',
         name: 'Holo-Visor Cap',
         price: 45.00,
-        image: 'https://images.unsplash.com/photo-1576871337632-b9aef4c17ab9?auto=format&fit=crop&w=800&q=80',
+        image: '/product-images/p2.png',
         description: 'Iridescent finish that shifts with your angle.'
     },
     'p3': {
         id: 'p3',
         name: 'Quantum Sneakers',
         price: 180.00,
-        image: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=800&q=80',
+        image: '/product-images/p3.png',
         description: 'Zero-gravity comfort for heavy duty tasks.'
     },
     'p4': {
         id: 'p4',
         name: 'Neural Interface Headset',
         price: 350.00,
-        image: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=800&q=80',
+        image: '/product-images/p4.png',
         description: 'Direct link to the grid. No latency.'
     },
     'p5': {
         id: 'p5',
         name: 'Tactical Backpack',
         price: 95.00,
-        image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80',
+        image: '/product-images/p5.png',
         description: 'Rugged storage for all your tech.'
     },
     'p6': {
         id: 'p6',
         name: 'Cyberpunk Shades',
         price: 60.00,
-        image: 'https://images.unsplash.com/photo-1577803645773-f96470509666?auto=format&fit=crop&w=800&q=80',
+        image: '/product-images/p6.png',
         description: 'UV protection with a heads-up display style.'
     },
     'p7': {
@@ -64,21 +64,21 @@ export const PRODUCTS: Record<string, Item> = {
         id: 'p8',
         name: 'Drone Companion',
         price: 899.00,
-        image: 'https://images.unsplash.com/photo-1506947411487-a56738267384?auto=format&fit=crop&w=800&q=80',
+        image: '/product-images/p8.png',
         description: 'Autonomous surveillance and assistance unit.'
     },
     'p9': {
         id: 'p9',
         name: 'Smart Watch',
         price: 299.00,
-        image: 'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?auto=format&fit=crop&w=800&q=80',
+        image: '/product-images/p9.png',
         description: 'Bio-monitoring and coms on your wrist.'
     },
     'p10': {
         id: 'p10',
         name: 'Ergonomic Gaming Chair',
         price: 450.00,
-        image: 'https://images.unsplash.com/photo-1598550476439-6847785fcea6?auto=format&fit=crop&w=800&q=80',
+        image: '/product-images/p10.png',
         description: 'Support for those long coding sessions.'
     },
 
@@ -87,35 +87,35 @@ export const PRODUCTS: Record<string, Item> = {
         id: 'p11',
         name: 'Neon Cyber Jacket (Red)',
         price: 125.00,
-        image: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=800&q=80',
+        image: '/product-images/p11.png',
         description: 'Standard issue neon jacket in aggressive crimson.'
     },
     'p12': {
         id: 'p12',
         name: 'Neon Cyber Jacket (Blue)',
         price: 125.00,
-        image: 'https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?auto=format&fit=crop&w=800&q=80',
+        image: '/product-images/p12.png',
         description: 'Cool blue variant of the classic runner wear.'
     },
     'p13': {
         id: 'p13',
         name: 'Plasma Cutter',
         price: 420.00,
-        image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80',
+        image: '/product-images/p13.png',
         description: 'Industrial grade tool for urban exploration.'
     },
     'p14': {
         id: 'p14',
         name: 'Data Chip Set',
         price: 25.00,
-        image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80',
+        image: '/product-images/p14.png',
         description: 'High capacity storage shards.'
     },
     'p15': {
         id: 'p15',
         name: 'Holo-Projector',
         price: 210.00,
-        image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80',
+        image: '/product-images/p15.png',
         description: 'Portable emitter for 3D constructs.'
     },
 
@@ -131,7 +131,7 @@ export const PRODUCTS: Record<string, Item> = {
         id: 'p17',
         name: 'Neo-Santa Hat',
         price: 20.00,
-        image: 'https://images.unsplash.com/photo-1543599538-a6c4f6cc5c05?auto=format&fit=crop&w=800&q=80',
+        image: '/product-images/p17.png',
         description: 'Classic red aesthetic with fiber optic trim.'
     },
     'p18': {
@@ -145,14 +145,14 @@ export const PRODUCTS: Record<string, Item> = {
         id: 'p19',
         name: 'Gift Box (Mystery)',
         price: 99.00,
-        image: 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=800&q=80',
+        image: '/product-images/p19.png',
         description: 'Encrypted contents. Unlock on Dec 25th.'
     },
     'p20': {
         id: 'p20',
         name: 'Snowfall Emitter',
         price: 150.00,
-        image: 'https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?auto=format&fit=crop&w=800&q=80',
+        image: '/product-images/p20.png',
         description: 'Creates a localized hologram of falling snow.'
     },
 
@@ -161,14 +161,14 @@ export const PRODUCTS: Record<string, Item> = {
         id: 'p21',
         name: 'Boxing Day Loot Crate',
         price: 49.99,
-        image: 'https://images.unsplash.com/photo-1595246140625-573b715d11dc?auto=format&fit=crop&w=800&q=80',
+        image: '/product-images/p21.png',
         description: 'Leftover tech stock at incredible value.'
     },
     'p22': {
         id: 'p22',
         name: 'Refurbished Drone',
         price: 499.00,
-        image: 'https://images.unsplash.com/photo-1473968512647-3e447244af8f?auto=format&fit=crop&w=800&q=80',
+        image: '/product-images/p22.png',
         description: 'Certified pre-owned autonomous unit.'
     },
 
@@ -177,14 +177,14 @@ export const PRODUCTS: Record<string, Item> = {
         id: 'p23',
         name: '2026 LED Glasses',
         price: 30.00,
-        image: 'https://images.unsplash.com/photo-1528495612343-9ca9f4a4de28?auto=format&fit=crop&w=800&q=80',
+        image: '/product-images/p23.png',
         description: 'Celebrate the new cycle in style.'
     },
     'p24': {
         id: 'p24',
         name: 'Confetti Cannon (Cyber)',
         price: 40.00,
-        image: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=800&q=80',
+        image: '/product-images/p24.png',
         description: 'Launches biodegradable glitter with a light show.'
     },
     'p25': {

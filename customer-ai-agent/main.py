@@ -4,6 +4,14 @@ import asyncio
 import random
 import json
 import os
+from pydantic import BaseModel, Field
+from typing import List
+
+class SimulationFeedback(BaseModel):
+    user_satisfaction: int = Field(description="Score 1-10")
+    primary_friction_point: str = Field(description="The biggest problem encountered")
+    liked_features: List[str] = Field(description="List of features the user liked")
+    reason_for_exit: str = Field(description="Reason for ending the session (e.g. 'completed purchase', 'too expensive')")
 
 # Get the directory where this script is located
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -51,13 +59,32 @@ async def run_customer_simulation(persona_override=None, headless=False, window_
         p = personas[index]
 
     task = f"""
-    You are simulating a real human customer visiting a website. 
-    Note that the website does not have product detail pages. 
-    The main actions are adding to cart and scrolling around to view products.
-    The website is organized into sections with CATEGORY HEADERS. Keep an eye out for these to find what you want.
-    Any feedback you give at the end should be based on the layout of the site and your experience finding products.
-    Your behavior should reflect the profile below.
-
+    You are simulating a real human customer visiting a website during **Valentine's Day Season**.
+    
+    CONTEXT
+    - It is Valentine's Day. You are looking for romantic gifts, flowers, chocolates, or special deals for your loved ones.
+    - Note that the website does not have product detail pages. This is a known constraint.
+    - The website is organized into sections with CATEGORY HEADERS (visual labels only - they are NOT clickable filters).
+    - There is NO search bar, NO filtering features, NO clickable navigation. You must scroll to browse.
+    
+    GRADING RUBRIC (Strictly follow this)
+    When you provide your final feedback summary, you must grade the website ONLY on factors the Store Manager can control:
+    
+    1. **Categorization**: Are items grouped properly? And are items that are similiar or frequently bought together close to each other?
+    2. **Relevance**: Are the items relevant to the current season? And based on the season was it easy to find the items you were shopping for?
+    3. **Layout**: Are more important items in bigger cards, so the most important are in flyers, lesser in doubles, and least in singles?
+    4. **Visual Appeal**: Does the store visually appeal to you based only the layout and NOT item descriptions, or images.
+    
+    DO NOT GRADE ON (The Store Manager cannot fix these):
+    - Site speed or technical performance.
+    - Lack of product detail pages (this is intentional design).
+    - Image loading issues.
+    - **Missing features** like search bars, clickable category filters, or navigation menus.
+    - **Category headers not being clickable** - they are visual labels only, not interactive elements.
+    - Amount of scrolling required (this is inherent to a single-page layout).
+    
+    FOCUS YOUR FEEDBACK ON: Item placement, grouping, card sizes, and whether relevant items are easy to spot at the top.
+    
     IDENTITY
     - Name: {p["identity"]["name"]}
     - Age: {p["identity"]["age"]}
@@ -67,7 +94,7 @@ async def run_customer_simulation(persona_override=None, headless=False, window_
     - Motivation level: {p["identity"]["motivation_level"]}
     GOAL
     You came to this website because:
-    - Primary goal: {p["goal"]["primary_goal"]}
+    - Primary goal: {p["goal"]["primary_goal"]} (Influenced by Valentine's Day)
     - Secondary goal: {p["goal"]["secondary_goal"]}
     CONSTRAINTS & PREFERENCES
     - Budget sensitivity: {p["constraints_preferences"]["budget_sensitivity"]}
@@ -84,6 +111,7 @@ async def run_customer_simulation(persona_override=None, headless=False, window_
     - Make decisions based on what is visible.
     - If confused, scroll or click something; do not hesitate.
     - Assume the UX is functional.
+    - **AIM TO COMPLETE YOUR REVIEW WITHIN 15 STEPS.** Efficient navigation is key.
 
     ENERGY / FATIGUE MODEL
     - Energy scale is 0–10.
@@ -93,24 +121,27 @@ async def run_customer_simulation(persona_override=None, headless=False, window_
     - low: 4–5
     ENERGY CHANGE RULES
     - Energy decreases on every major interaction:
-    - Low-effort interaction (scroll, obvious click): -0.5
-    - Medium-effort interaction (searching, filtering, comparing items): -1
-    - High-effort interaction (forms, checkout steps, errors): -2
+    - Low-effort interaction (scroll, obvious click): -0.1
+    - Medium-effort interaction (searching, filtering, comparing items): -0.5
+    - High-effort interaction (forms, checkout steps, errors): -1
+    - **CRITICAL**: Do NOT decrease energy just because a feature (like a search bar) is missing. You are grading the Store Manager's layout, not the platform's features.
     SESSION STATE (initial)
     - Energy: {p["initial_state"]["energy"]}
     - Confusion: {p["initial_state"]["confusion"]}
     - Commitment: {p["initial_state"]["commitment"]}
     - Progress: {p["initial_state"]["progress"]}
 
+
     IMPORTANT FINAL STEP:
-    Once you have completed your goal or run out of energy, you MUST return a strict JSON summary of your experience.
-    The format should be:
-    {{
-        "user_satisfaction": "1-10",
-        "primary_friction_point": "string",
-        "liked_features": ["string"],
-        "reason_for_exit": "string"
-    }}
+    **CRITICAL**: The simulation is ONLY considered successful if you provide the final feedback.
+    
+    You have two valid ways to end the session:
+    1. **Checkout**: If you found a suitable item and are satisfied.
+    2. **Leave**: If you are frustrated, energy is low, or didn't find what you wanted.
+    
+    **IN BOTH CASES, YOU MUST SUBMIT YOUR FEEDBACK.**
+    
+    The system will verify your feedback structure automatically. Just focus on being honest based on your persona.
     """
 
     initial_actions = [
@@ -154,7 +185,8 @@ async def run_customer_simulation(persona_override=None, headless=False, window_
                   llm=llm, 
                   browser_profile=browser_profile,
                   initial_actions=initial_actions,
-                  max_steps=25
+                  output_model_schema=SimulationFeedback,
+                  max_steps=60
                   )
     
     history = await agent.run()
