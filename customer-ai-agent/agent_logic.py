@@ -17,13 +17,41 @@ async def run_single_simulation(persona_override=None, window_index=0, total_win
         # Extract the final result
         result = history.final_result() 
 
+        # Convert Pydantic model to dict if applicable
+        if hasattr(result, 'model_dump'):
+            result = result.model_dump()
+        elif hasattr(result, 'dict'):
+            result = result.dict()
+
+        if result and isinstance(result, dict) and 'user_satisfaction' in result:
+             # Ensure types are correct for the feedback server
+             result['user_satisfaction'] = str(result['user_satisfaction'])
+             return {
+                "status": "completed",
+                "persona": persona_name,
+                "feedback": result
+            }
+        
+        # If result is missing or malformed, return what we have (or empty) but let the server handle it
+        # or just return as completed with whatever result is (even if None) to avoid "Session abandoned" injection
         return {
             "status": "completed",
             "persona": persona_name,
-            "feedback": result
+            "feedback": result if result else {}
         }
     except Exception as e:
-        return {"status": "error", "message": str(e)}
+        # Even on exception, return feedback indicating failure
+        return {
+            "status": "error", 
+            "persona": persona_override if isinstance(persona_override, str) else "Unknown",
+            "feedback": {
+                "user_satisfaction": "0",
+                "primary_friction_point": f"Simulation error: {str(e)}",
+                "liked_features": [],
+                "reason_for_exit": "Technical error during simulation"
+            },
+            "message": str(e)
+        }
 
 async def run_batch_simulation(count=3, persona_override=None):
     """

@@ -22,35 +22,35 @@ export const PRODUCTS: Record<string, Item> = {
         id: 'p2',
         name: 'Holo-Visor Cap',
         price: 45.00,
-        image: 'https://images.unsplash.com/photo-1576871337632-b9aef4c17ab9?auto=format&fit=crop&w=800&q=80',
+        image: '/product-images/p2.png',
         description: 'Iridescent finish that shifts with your angle.'
     },
     'p3': {
         id: 'p3',
         name: 'Quantum Sneakers',
         price: 180.00,
-        image: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=800&q=80',
+        image: '/product-images/p3.png',
         description: 'Zero-gravity comfort for heavy duty tasks.'
     },
     'p4': {
         id: 'p4',
         name: 'Neural Interface Headset',
         price: 350.00,
-        image: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=800&q=80',
+        image: '/product-images/p4.png',
         description: 'Direct link to the grid. No latency.'
     },
     'p5': {
         id: 'p5',
         name: 'Tactical Backpack',
         price: 95.00,
-        image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80',
+        image: '/product-images/p5.png',
         description: 'Rugged storage for all your tech.'
     },
     'p6': {
         id: 'p6',
         name: 'Cyberpunk Shades',
         price: 60.00,
-        image: 'https://images.unsplash.com/photo-1577803645773-f96470509666?auto=format&fit=crop&w=800&q=80',
+        image: '/product-images/p6.png',
         description: 'UV protection with a heads-up display style.'
     },
     'p7': {
