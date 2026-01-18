@@ -1,4 +1,20 @@
-# Introduction
-XYZ is a tool used to help determine optimal store layouts. It uses AI agents to act as customers, each browsing the store with their own personality and goals in mind. 
+## Inspiration
+Companies spend 1.5 billion dollars annually on **A/B testing** in the United States alone. Companies like Shopify, and Amplitude are constantly optimizing ecommerce platforms in hopes of increasing sales by even marginal amounts. Even a 0.1% boost in engagement can lead to hundreds of thousands of dollars in increased revenue. Our group aims to create tools to help supplement the A/B testing suite through the use of AI. 
 
-The website collects data and adjusts itself based on user activity so that it can optimize to find trends for the user base.
+## What it does
+Halt creates a A/B testing simulation, allowing for companies to test possible store changes before bringing them into production. Halt allows companies to create fake customers with the personalities they think best represent their target audience and then test their reaction to the companies e-commerce webpage. Halt also provides an agent to directly change the store layout and then use fake customers to evaluate it's changes. 
+
+## How we built it
+Halt is a combination of many agents. A single store manager agent that views analytics and alters the layout of the store, and a plethora of customer agents that interact with the site and act as shoppers with different personalities and goals. The agents are using multiple Gemini flash models and Browser Use to help agents access our website. The storefront itself is built using React and it generates events fed into MongoDB which our storefront agent periodically retrieves to make informed decisions about future layout plans. Finally we host our website using Vercel and added a .tech domain.
+
+## Challenges we ran into
+One of our main challenges was creating a reliable work flow between our multiple agents and creating a data flow between our whole system to allow for our agentic self-evolving structure. With multiple autonomous agents making decisions based on user behavior, it was difficult to determine how events should be collected, stored, and retrieved by different parts of the system. We had to be particularly careful with the data procurement as to ensure our storefront could collect data that was meaningful to the storefront manager LLM. Our lack of prior experience with agentic architecture and LLM integration   lead to many early iterations of our product where the store manager did not have sufficient data to make meaningful changes. All in all, integrating LLM's with decision making into a traditional web stack required significant experimentation and exploration and helped us become more experiences programmers in general.
+
+## Accomplishments that we're proud of
+We were able to successfully integrate agentic LLMs into a live web based environment, demonstrating their potential beyond the traditional chatbot interface. In addition, we designed and deployed a robust  full-stack pipeline with clear data flows, which allow us to deliver real-world impact on e-commerce operations and the user shopping experience.
+
+## What we learned
+We learned more about the challenges of system design and agentic workflows. A large portion of our time was spent planning how our system would interact with itself. In our project in particular, we the store manager calling our backend to modify the store layout, then calling upon a suite of customer agents to try shopping with the new layout. The shoppers would interact with the site leading to many events being generated and also a summary of their experiences which the manager uses to iteratively improve on their design. Managing the workflow required many design changes and overhauls which may sound painful but lead to many important discussions and lessons. 
+
+## What's next for Halt
+Our future goals include integrating a recommendation system to offer complementary goods based on the user's action within their shopping session through more granular customer events. We also have plans to allow for sales and promotions to be handled by the manager agent which can be particularly useful when combined with an agent's capability to research current trends online.
