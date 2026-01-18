@@ -18,7 +18,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 MODEL_API_KEY = os.environ.get("API_KEY")
-API_URL = "https://halt-backend.vercel.app/"
+API_URL = "https://api.halt-hack.tech/"
 
 # Function to prompt the AI model using Gemini API
 def get_ai_instructions(ai_client, prompt):
