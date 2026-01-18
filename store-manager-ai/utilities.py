@@ -1,12 +1,5 @@
 import json
-import logging
-
-# Set up logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+from logger.logger import logger
 
 # testing prompt for POC
 def get_prompt(current_layout):

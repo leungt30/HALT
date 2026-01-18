@@ -15,7 +15,9 @@ class StoreConnector:
             print("Error fetching current layout:", str(e))
             return None
 
-    def update_layout(self, new_layout):
+    def update_layout(self, new_layout, flag_value=None):
+        if flag_value: 
+            self.layout_flag(flag_value)
         try:
             response = self.session.post(
                 f"{self.api_url}api/layout",
@@ -25,4 +27,25 @@ class StoreConnector:
             return response.json()
         except requests.exceptions.RequestException as e:
             print("Error updating layout:", str(e))
+            return None
+    
+    def set_flag(self, flag_value):
+        try:
+            response = self.session.post(
+                f"{self.api_url}api/flags",
+                json={"flag": flag_value}
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            print("Error flagging layout:", str(e))
+            return None
+
+    def get_layout_history(self):
+        try:
+            response = self.session.get(f"{self.api_url}api/layouts/history")
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            print("Error fetching layout history:", str(e))
             return None
