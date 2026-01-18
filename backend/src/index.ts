@@ -68,10 +68,18 @@ app.get('/api/layout', async (req: Request, res: Response) => {
         const layout = await getLayout();
         // Enrich layout items with product description
         const enrichedLayout = layout.map(item => {
-            const product = PRODUCTS[item.itemId];
+            if ('type' in item && item.type === 'category') {
+                return item;
+            }
+
+            const productItem = item as any;
+
+            if (!productItem.itemId) return item;
+
+            const product = PRODUCTS[productItem.itemId];
             return {
                 ...item,
-                description: product ? product.description : 'Unknown Product'
+                description: product ? product.description : 'Product Description'
             };
         });
         res.json(enrichedLayout);
