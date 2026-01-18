@@ -45,14 +45,14 @@ def get_optimization_prompt(current_layout, feedback_summary, average_score):
        - "single" takes 1 slot. "double" takes 2 slots. "flyer" takes 4 slots.
     3. CATEGORY HEADERS:
        - You can insert category headers to organize sections.
-       - Format: { "type": "category", "name": "Section Name", "id": "section-id" }
+       - Format: {{ "type": "category", "name": "Section Name", "id": "section-id" }}
        - Categories take up a full row visual break.
     4. CONSTRAINT: The total width of the layout is a grid. Ideally, rows (between categories) should sum to 4 slots (e.g., 4 singles, 2 doubles, 1 flyer). 
        Try to organize items so they form complete rows.
 
     Provide the NEW optimized layout in strictly JSON format array. 
-    Example Item: { "itemId": "p1", "variant": "single" }
-    Example Category: { "type": "category", "name": "New Arrivals", "id": "new-arrivals" }
+    Example Item: {{ "itemId": "p1", "variant": "single" }}
+    Example Category: {{ "type": "category", "name": "New Arrivals", "id": "new-arrivals" }}
     
     Do not output markdown code blocks. Just the raw JSON array.
     '''
