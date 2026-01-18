@@ -155,13 +155,17 @@ def main():
         if not sim_results:
             logger.error("Simulation failed. Aborting loop.")
             break
-            
-        # 3. Analyze Feedback
+        
+        # 3. Fetch customer actions
+        customer_actions = store_connector.get_customer_actions(flag_value=flag_name)
+        logger.info(f"Retrieved customer actions: {json.dumps(customer_actions, indent=2)}")
+        
+        # 4. Analyze Feedback
         avg_score, feedback_summary = analyze_results(sim_results)
         logger.info(f"📊 Iteration {iteration} Results: Avg Score = {avg_score:.2f}/10")
         logger.info(f"📝 Customer Feedback Summary:\n{feedback_summary}")
         
-        # 4. Success Check
+        # 5. Success Check
         if avg_score > 8.0:
             logger.info("✅ Target Score (> 8.0) Reached! Stopping optimization.")
             logger.info("🎉 Opening the FINAL OPTIMIZED LAYOUT in your browser...")
@@ -171,8 +175,8 @@ def main():
         
         logger.info("❌ Score too low. Generating improvements...")
         
-        # 5. Optimize Layout
-        prompt = get_optimization_prompt(current_layout, feedback_summary, avg_score)
+        # 6. Optimize Layout
+        prompt = get_optimization_prompt(current_layout, feedback_summary, avg_score, customer_actions)
         new_layout = retry_get_ai_instructions(store_manager_agent, prompt)
         
         if not new_layout:
