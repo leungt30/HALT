@@ -32,7 +32,7 @@ class StoreConnector:
     def set_flag(self, flag_value):
         try:
             response = self.session.post(
-                f"{self.api_url}api/layout/flag",
+                f"{self.api_url}api/flags",
                 json={"flag": flag_value}
             )
             response.raise_for_status()
@@ -43,7 +43,7 @@ class StoreConnector:
 
     def get_layout_history(self):
         try:
-            response = self.session.get(f"{self.api_url}api/layout/history")
+            response = self.session.get(f"{self.api_url}api/layouts/history")
             response.raise_for_status()
             return response.json()
         except requests.exceptions.RequestException as e:
