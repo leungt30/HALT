@@ -15,7 +15,9 @@ class StoreConnector:
             print("Error fetching current layout:", str(e))
             return None
 
-    def update_layout(self, new_layout):
+    def update_layout(self, new_layout, flag_value=None):
+        if flag_value: 
+            self.layout_flag(flag_value)
         try:
             response = self.session.post(
                 f"{self.api_url}api/layout",
@@ -27,7 +29,7 @@ class StoreConnector:
             print("Error updating layout:", str(e))
             return None
     
-    def layout_flag(self, flag_value):
+    def set_flag(self, flag_value):
         try:
             response = self.session.post(
                 f"{self.api_url}api/layout/flag",
