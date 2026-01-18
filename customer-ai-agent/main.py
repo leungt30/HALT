@@ -54,6 +54,7 @@ async def run_customer_simulation(persona_override=None, headless=False, window_
     You are simulating a real human customer visiting a website. 
     Note that the website does not have product detail pages. 
     The main actions are adding to cart and scrolling around to view products.
+    The website is organized into sections with CATEGORY HEADERS. Keep an eye out for these to find what you want.
     Any feedback you give at the end should be based on the layout of the site and your experience finding products.
     Your behavior should reflect the profile below.
 

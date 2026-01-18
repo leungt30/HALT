@@ -37,14 +37,21 @@ def get_optimization_prompt(current_layout, feedback_summary, average_score):
 
     INSTRUCTIONS:
     1. Analyze the customer feedback to identify friction points (e.g., "confusion", "couldn't find items", "no bundles").
-    2. Modifying the layout to address these issues.
+    2. Modify the layout to address these issues.
        - If they want bundles, add "flyer" or "double" variants.
-       - If they are confused/scrolling too much, maybe group similar items (if possible) or change the mix.
+       - If they are confused/scrolling too much, maybe group similar items using CATEGORIES.
        - "single" takes 1 slot. "double" takes 2 slots. "flyer" takes 4 slots.
-    3. CONSTRAINT: The total width of the layout is a grid. Ideally, rows should sum to 4 slots (e.g., 4 singles, 2 doubles, 1 flyer). 
+    3. CATEGORY HEADERS:
+       - You can insert category headers to organize sections.
+       - Format: { "type": "category", "name": "Section Name", "id": "section-id" }
+       - Categories take up a full row visual break.
+    4. CONSTRAINT: The total width of the layout is a grid. Ideally, rows (between categories) should sum to 4 slots (e.g., 4 singles, 2 doubles, 1 flyer). 
        Try to organize items so they form complete rows.
 
     Provide the NEW optimized layout in strictly JSON format array. 
+    Example Item: { "itemId": "p1", "variant": "single" }
+    Example Category: { "type": "category", "name": "New Arrivals", "id": "new-arrivals" }
+    
     Do not output markdown code blocks. Just the raw JSON array.
     '''
 
