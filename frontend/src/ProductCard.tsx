@@ -1,6 +1,8 @@
 import React from 'react';
 import { type Item, type BlockVariant } from './data';
 import { useCart } from './CartContext';
+import { useCustomerAction } from './useCustomerAction';
+
 
 interface ProductCardProps {
     item: Item;
@@ -9,15 +11,18 @@ interface ProductCardProps {
 
 export const ProductCard: React.FC<ProductCardProps> = ({ item, variant }) => {
     const { addToCart } = useCart();
+    const { logAction } = useCustomerAction();
     const [isAdded, setIsAdded] = React.useState(false);
 
     const handleAdd = () => {
         addToCart(item);
+        logAction('add_to_cart', item.name);
         setIsAdded(true);
         setTimeout(() => setIsAdded(false), 1000);
     };
 
     const formatPrice = (price: number) => `$${price.toFixed(2)}`;
+
 
     if (variant === 'single') {
         return (

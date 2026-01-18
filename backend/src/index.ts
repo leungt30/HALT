@@ -15,6 +15,7 @@ app.use(cors({
 app.use(express.json());
 
 import { PRODUCTS } from './products';
+import { saveCustomerAction, insertFlagAction, getCustomerActions } from './models/CustomerAction';
 
 // --- SSE Client Management ---
 const sseClients: Response[] = [];
@@ -67,10 +68,18 @@ app.get('/api/layout', async (req: Request, res: Response) => {
         const layout = await getLayout();
         // Enrich layout items with product description
         const enrichedLayout = layout.map(item => {
-            const product = PRODUCTS[item.itemId];
+            if ('type' in item && item.type === 'category') {
+                return item;
+            }
+
+            const productItem = item as any;
+
+            if (!productItem.itemId) return item;
+
+            const product = PRODUCTS[productItem.itemId];
             return {
                 ...item,
-                description: product ? product.description : 'Unknown Product'
+                description: product ? product.description : 'Product Description'
             };
         });
         res.json(enrichedLayout);
@@ -107,16 +116,37 @@ app.post('/api/flags', async (req: Request, res: Response) => {
     }
 
     try {
-        const success = await setFlag(flag);
-        if (success) {
-            console.log(`Flag '${flag}' set on latest layout`);
+        const layoutSuccess = await setFlag(flag);
+        // Also insert flag into customer action stream
+        await insertFlagAction(flag);
+
+        if (layoutSuccess) {
+            console.log(`Flag '${flag}' set on latest layout and event stream`);
             res.json({ success: true, flag });
         } else {
-            res.status(404).json({ error: 'No layout found to flag' });
+            // Even if no layout, we might still want to flag events? 
+            // Strict interpretation: "use the same flag end point to also set flags in the event tracking stuff"
+            // So we do both.
+            res.status(404).json({ error: 'No layout found to flag, but event flag set (partial success?)' });
         }
     } catch (error) {
         console.error('Error setting flag:', error);
         res.status(500).json({ error: 'Failed to set flag' });
+    }
+});
+
+app.post('/api/CustomerAction', async (req: Request, res: Response) => {
+
+    try {
+        const customerAction = req.body;
+        // add current timestamp to body
+        customerAction.timestamp = new Date();
+        await saveCustomerAction(customerAction);
+        res.json({ success: true });
+
+    } catch (error) {
+        console.error('Error sending customer actions:', error);
+        res.status(500).json({ error: 'Failed to send customer actions' });
     }
 });
 
@@ -129,6 +159,18 @@ app.get('/api/layouts/history', async (req: Request, res: Response) => {
     } catch (error) {
         console.error('Error fetching layout history:', error);
         res.status(500).json({ error: 'Failed to fetch layout history' });
+    }
+});
+
+app.get('/api/customer-actions', async (req: Request, res: Response) => {
+    const flag = req.query.flag as string | undefined;
+
+    try {
+        const actions = await getCustomerActions(flag);
+        res.json(actions);
+    } catch (error) {
+        console.error('Error fetching customer actions:', error);
+        res.status(500).json({ error: 'Failed to fetch customer actions' });
     }
 });
 

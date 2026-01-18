@@ -1,5 +1,6 @@
 import React from 'react';
 import { useCart } from './CartContext';
+import { useCustomerAction } from './useCustomerAction';
 
 interface CartDrawerProps {
     isOpen: boolean;
@@ -9,8 +10,14 @@ interface CartDrawerProps {
 
 export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheckout }) => {
     const { items, count, total, removeFromCart, updateQuantity } = useCart();
+    const { logAction } = useCustomerAction();
 
     const formatPrice = (price: number) => `$${price.toFixed(2)}`;
+
+    const handleCheckout = () => {
+        logAction('checkout', 'cart');
+        onCheckout();
+    };
 
     return (
         <React.Fragment>
@@ -80,7 +87,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                             <span>Total</span>
                             <span style={{ color: 'var(--accent-color)' }}>{formatPrice(total)}</span>
                         </div>
-                        <button className="checkout-btn" onClick={onCheckout}>
+                        <button className="checkout-btn" onClick={handleCheckout}>
                             Checkout
                         </button>
                     </div>
@@ -89,3 +96,4 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
         </React.Fragment>
     );
 };
+

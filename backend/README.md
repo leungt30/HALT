@@ -72,12 +72,18 @@ Returns an array of layout objects joined with product descriptions:
 ]
 ```
 
-- **`itemId`**: The unique ID of the product (e.g., `p1`, `p2`).
+- **`itemId`**: The unique ID of the product (e.g., `p1`, `p2`). Required for products.
 - **`variant`**: The visual template to use. One of:
   - `single`: 1x1 standard block.
   - `double`: 2x1 wide block.
   - `flyer`: 4x1 full-width featured block.
 - **`description`**: The product description (helper field for AI context).
+
+**OR** (for Category Headers):
+
+- **`type`**: Must be `"category"`.
+- **`name`**: Display name (e.g., "Tech Essentials").
+- **`id`**: Anchor ID for navigation (e.g., "tech-essentials").
 
 #### `POST /api/layout`
 Updates the global layout configuration. This is intended to be used by the Store Manager AI agent to dynamically reorganize the shop.
@@ -152,4 +158,36 @@ Returns an array of layout documents, where each document contains:
     "createdAt": "2024-05-20T09:30:00.000Z"
   }
 ]
+```
+
+### Customer Actions
+
+#### `POST /api/flags` (Updated)
+Now also inserts a `FLAG` event into the customer action stream, synchronizing layout history with user behavior analysis.
+
+#### `GET /api/customer-actions`
+Retrieves a segment of the customer action history based on flags.
+
+**Query Parameters**
+- `flag` (optional): The starting flag for the action segment.
+
+**Behavior**
+- Functions identically to layout history:
+    - No flag: Actions from latest back to most recent flag.
+    - Flag provided: Actions from that flag forward to the next flag.
+
+**Response**
+Returns an array of customer action objects.
+
+#### `POST /api/CustomerAction`
+Saves a user interaction event.
+
+**Request Body**
+```json
+{
+  "actionType": "CLICK",
+  "actionSubject": "p1",
+  "sessionId": "...",
+  ...
+}
 ```
