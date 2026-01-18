@@ -17,9 +17,32 @@ env:
   VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
 
 jobs:
-  deploy-frontend:
+  # Detect which paths changed
+  changes:
     runs-on: ubuntu-latest
-    if: success()
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend }}
+      backend: ${{ steps.filter.outputs.backend }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            frontend:
+              - 'frontend/**'
+              - 'package.json'
+              - '.github/workflows/deploy.yml'
+            backend:
+              - 'backend/**'
+              - 'package.json'
+              - '.github/workflows/deploy.yml'
+
+  deploy-frontend:
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true'
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       
@@ -46,8 +69,9 @@ jobs:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_FRONTEND }}
 
   deploy-backend:
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
-    if: success()
     steps:
       - uses: actions/checkout@v4
       
