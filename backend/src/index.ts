@@ -15,6 +15,7 @@ app.use(cors({
 app.use(express.json());
 
 import { PRODUCTS } from './products';
+import { saveCustomerAction } from './models/CustomerAction';
 
 // --- SSE Client Management ---
 const sseClients: Response[] = [];
@@ -117,6 +118,21 @@ app.post('/api/flags', async (req: Request, res: Response) => {
     } catch (error) {
         console.error('Error setting flag:', error);
         res.status(500).json({ error: 'Failed to set flag' });
+    }
+});
+
+app.post('/api/CustomerAction', async (req: Request, res: Response) => {
+
+    try {
+        const customerAction = req.body;
+        // add current timestamp to body
+        customerAction.timestamp = new Date();
+        await saveCustomerAction(customerAction);
+        res.json({ success: true });
+
+    } catch (error) {
+        console.error('Error sending customer actions:', error);
+        res.status(500).json({ error: 'Failed to send customer actions' });
     }
 });
 

@@ -2,6 +2,7 @@ import React from 'react';
 import { type Item, type BlockVariant } from './data';
 import { useCart } from './CartContext';
 
+
 interface ProductCardProps {
     item: Item;
     variant: BlockVariant;
@@ -15,6 +16,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ item, variant }) => {
         addToCart(item);
         setIsAdded(true);
         setTimeout(() => setIsAdded(false), 1000);
+
+        // Log the add to cart event
+        fetch('/api/CustomerAction', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ itemId: item.id, itemName: item.name, price: item.price, timestamp: new Date() })
+        }).catch(err => console.error('Failed to log cart add event:', err));
     };
 
     const formatPrice = (price: number) => `$${price.toFixed(2)}`;

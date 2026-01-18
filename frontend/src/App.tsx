@@ -34,6 +34,7 @@ function App() {
 
   const handleSeeMore = () => {
     setVisibleCount(prev => prev + PAGE_SIZE);
+
   };
 
   useEffect(() => {
