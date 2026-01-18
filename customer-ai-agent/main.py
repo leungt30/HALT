@@ -17,12 +17,14 @@ personas_path = os.path.join(script_dir, "personas.json")
 with open(personas_path, "r", encoding="utf-8") as f:
     personas = json.load(f)
 
-async def run_customer_simulation(persona_override=None, headless=False):
+async def run_customer_simulation(persona_override=None, headless=False, window_index=None, total_windows=1):
     """
     Core simulation logic.
     Args:
         persona_override: Optional name or object to force a specific persona.
         headless: Boolean to run browser in headless mode.
+        window_index: Index of this window in a batch (0-based).
+        total_windows: Total number of windows in the batch.
     Returns:
         Agent history object.
     """
@@ -111,12 +113,40 @@ async def run_customer_simulation(persona_override=None, headless=False):
     """
 
     initial_actions = [
-        {'navigate': {'url': 'https://halt-frontend-alaqmargs-projects.vercel.app/', 'new_tab': False}},
+        {'navigate': {'url': 'https://halt-hack.tech/', 'new_tab': False}},
     ]
+
+    # Calculate Window Position for Tiling
+    # Assuming safe screen size 1500x900
+    screen_width = 1500
+    screen_height = 900
+    
+    # Defaults
+    my_window_position = None
+    my_window_size = None
+    
+    if window_index is not None and not headless:
+        width_per_window = screen_width // total_windows
+        height_per_window = screen_height
+        
+        x_pos = window_index * width_per_window
+        y_pos = 0 # Top align
+        
+        # BrowserProfile accepts 'window_position' and 'window_size' as dicts or ViewportSize objects
+        # Based on pydantic model, we can pass dicts.
+        my_window_position = {"width": x_pos, "height": y_pos} # Note: 'width' here maps to x, 'height' to y in ViewportSize usage for pos?
+        # WAIT: ViewportSize has width/height fields. 
+        # browser_use.browser.profile.BrowserProfile definition:
+        # window_position: ViewportSize | None = ... description='... x,y ...'
+        # So width=x, height=y.
+        my_window_position = {"width": x_pos, "height": y_pos}
+        my_window_size = {"width": width_per_window, "height": height_per_window}
 
     browser_profile = BrowserProfile(
         headless=headless,
-        keep_alive=not headless, # Keep alive if visible, close if headless (usually)
+        keep_alive=False, 
+        window_position=my_window_position,
+        window_size=my_window_size
     )
 
     agent = Agent(task=task, 

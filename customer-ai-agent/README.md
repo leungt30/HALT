@@ -33,18 +33,19 @@ Triggers a new browser agent session. The agent will pick a random persona (or u
 
 | Field | Type | Required | Description |
 | :--- | :--- | :--- | :--- |
-| `persona_override` | `string` | No | Name of a specific persona to simulate (e.g., "Harold Nguyen"). If omitted, a random persona is chosen. |
+| `persona_override` | `string` | No | Name of a specific persona to simulate. |
+| `count` | `integer` | No | Number of concurrent simulations to run. Default: 3 |
 
 #### Example Request
 
-**Random Persona:**
+**Batch Simulation (Default):**
 ```bash
 curl -X POST http://localhost:8000/simulate \
   -H "Content-Type: application/json" \
-  -d '{}'
+  -d '{ "count": 3 }'
 ```
 
-**Specific Persona:**
+**Specific Persona (Single):**
 ```bash
 curl -X POST http://localhost:8000/simulate \
   -H "Content-Type: application/json" \
@@ -53,18 +54,29 @@ curl -X POST http://localhost:8000/simulate \
 
 #### Response
 
-Returns a JSON object containing the execution status and the feedback provided by the "customer".
+Returns a JSON object containing a list of results.
 
 ```json
 {
-  "status": "completed",
-  "persona": "Renee Whitaker",
-  "feedback": {
-    "user_satisfaction": "8",
-    "primary_friction_point": "No search bar found.",
-    "liked_features": ["Clean layout", "Fast loading"],
-    "reason_for_exit": "Goal completed."
-  }
+  "status": "batch_completed",
+  "count": 3,
+  "results": [
+    {
+      "status": "completed",
+      "persona": "Renee Whitaker",
+      "feedback": { ... }
+    },
+    {
+      "status": "completed",
+      "persona": "Maya Deshpande",
+      "feedback": { ... }
+    },
+     {
+      "status": "completed",
+      "persona": "Aisha Farouk",
+      "feedback": { ... }
+    }
+  ]
 }
 ```
 
