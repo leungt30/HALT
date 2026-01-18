@@ -1,10 +1,23 @@
 import { getDatabase } from '../db';
 import { BlockVariant } from '../products';
 
-export interface LayoutItem {
+// Product layout item
+export interface ProductLayoutItem {
+    type?: 'product'; // Optional for backwards compatibility
     itemId: string;
     variant: BlockVariant;
+    description?: string;
 }
+
+// Category header item
+export interface CategoryLayoutItem {
+    type: 'category';
+    name: string;
+    id: string;
+}
+
+// Union type for layout items
+export type LayoutItem = ProductLayoutItem | CategoryLayoutItem;
 
 export interface LayoutDocument {
     _id?: any; // MongoDB generates this

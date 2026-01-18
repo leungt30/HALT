@@ -9,9 +9,27 @@ export interface Item {
 
 export type BlockVariant = 'single' | 'double' | 'flyer';
 
-export interface LayoutItem {
+// Product layout item
+export interface ProductLayoutItem {
+  type?: 'product'; // Optional for backwards compatibility
   itemId: string;
   variant: BlockVariant;
+  description?: string;
+}
+
+// Category header item
+export interface CategoryLayoutItem {
+  type: 'category';
+  name: string;  // Display name, e.g., "Tech Essentials"
+  id: string;    // Anchor ID, e.g., "tech-essentials"
+}
+
+// Union type for layout items
+export type LayoutItem = ProductLayoutItem | CategoryLayoutItem;
+
+// Type guard to check if item is a category
+export function isCategory(item: LayoutItem): item is CategoryLayoutItem {
+  return item.type === 'category';
 }
 
 export const ITEMS: Record<string, Item> = {
@@ -135,7 +153,8 @@ export const ITEMS: Record<string, Item> = {
 };
 
 export const INITIAL_LAYOUT: LayoutItem[] = [
-  // First 10 (Original)
+  // Tech Essentials Category
+  { type: 'category', name: 'Tech Essentials', id: 'tech-essentials' },
   { itemId: 'p8', variant: 'flyer' }, // Drone
   { itemId: 'p1', variant: 'double' },
   { itemId: 'p3', variant: 'double' },
@@ -147,7 +166,8 @@ export const INITIAL_LAYOUT: LayoutItem[] = [
   { itemId: 'p7', variant: 'double' },
   { itemId: 'p9', variant: 'double' },
 
-  // Seasonal Highlight
+  // Seasonal Specials Category
+  { type: 'category', name: 'Seasonal Specials', id: 'seasonal-specials' },
   { itemId: 'p16', variant: 'flyer' }, // Wreath
   { itemId: 'p17', variant: 'double' }, // Santa
   { itemId: 'p18', variant: 'double' }, // Ornament
@@ -156,7 +176,8 @@ export const INITIAL_LAYOUT: LayoutItem[] = [
   { itemId: 'p21', variant: 'single' }, // Loot Crate
   { itemId: 'p22', variant: 'single' }, // Drone 2
 
-  // Tech Mix
+  // Premium Collection Category
+  { type: 'category', name: 'Premium Collection', id: 'premium-collection' },
   { itemId: 'p50', variant: 'flyer' }, // Monolith
   { itemId: 'p11', variant: 'double' },
   { itemId: 'p12', variant: 'double' },
