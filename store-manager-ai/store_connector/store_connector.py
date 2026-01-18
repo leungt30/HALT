@@ -51,3 +51,12 @@ class StoreConnector:
         except requests.exceptions.RequestException as e:
             print("Error fetching layout history:", str(e))
             return None
+        
+    def get_customer_actions(self, flag_value=None):
+        try:
+            response = self.session.get(f"{self.api_url}api/customer-actions", params={"flag": flag_value} if flag_value else {}, timeout=10)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            print("Error fetching customer actions:", str(e))
+            return None
