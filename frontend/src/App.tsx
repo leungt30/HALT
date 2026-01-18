@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import { StoreGrid } from './StoreGrid';
 import { INITIAL_LAYOUT, type LayoutItem, type CategoryLayoutItem, isCategory } from './data';
 import { CartProvider, useCart } from './CartContext';
+
 import { CartDrawer } from './CartDrawer';
 import { OrderConfirmation } from './OrderConfirmation';
+import { useCustomerAction } from './useCustomerAction';
 
 interface HeaderProps {
   onOpenCart: () => void;
@@ -46,18 +48,39 @@ const Header = ({ onOpenCart, categories, onCategoryClick }: HeaderProps) => {
   );
 };
 
+const StoreContent = ({ layout, loading, visibleCount, handleSeeMore }: { layout: LayoutItem[], loading: boolean, visibleCount: number, handleSeeMore: () => void }) => {
+    return loading ? (
+        <div style={{ textAlign: 'center', margin: '2rem' }}>Loading Store Config...</div>
+    ) : (
+        <>
+            <StoreGrid layout={layout.slice(0, visibleCount)} />
+            {visibleCount < layout.length && (
+                <div className="see-more-container">
+                    <button className="see-more-btn" onClick={handleSeeMore}>
+                        See More
+                    </button>
+                </div>
+            )}
+        </>
+    )
+}
+
+
 function App() {
   const [layout, setLayout] = useState<LayoutItem[]>(INITIAL_LAYOUT);
   const [loading, setLoading] = useState(true);
   const [visibleCount, setVisibleCount] = useState(8);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [view, setView] = useState<'store' | 'confirmation'>('store');
+  const { logAction } = useCustomerAction();
 
   const PAGE_SIZE = 8;
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
   const handleSeeMore = () => {
+    logAction('click', 'see_more');
     setVisibleCount(prev => prev + PAGE_SIZE);
+
   };
 
   const handleCategoryClick = (id: string) => {
@@ -88,6 +111,7 @@ function App() {
   };
 
   useEffect(() => {
+
     // Fetch initial layout
     fetch(`${API_URL}/api/layout`)
       .then(response => {
@@ -148,24 +172,12 @@ function App() {
       />
       <main>
         {view === 'store' ? (
-          loading ? (
-            <div style={{ textAlign: 'center', margin: '2rem' }}>Loading Store Config...</div>
-          ) : (
-            <>
-              <StoreGrid layout={layout.slice(0, visibleCount)} />
-              {visibleCount < layout.length && (
-                <div className="see-more-container">
-                  <button className="see-more-btn" onClick={handleSeeMore}>
-                    See More
-                  </button>
-                </div>
-              )}
-            </>
-          )
+            <StoreContent layout={layout} loading={loading} visibleCount={visibleCount} handleSeeMore={handleSeeMore} />
         ) : (
           <OrderConfirmation onContinueShopping={() => setView('store')} />
         )}
       </main>
+
     </CartProvider>
   );
 }

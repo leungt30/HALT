@@ -159,3 +159,35 @@ Returns an array of layout documents, where each document contains:
   }
 ]
 ```
+
+### Customer Actions
+
+#### `POST /api/flags` (Updated)
+Now also inserts a `FLAG` event into the customer action stream, synchronizing layout history with user behavior analysis.
+
+#### `GET /api/customer-actions`
+Retrieves a segment of the customer action history based on flags.
+
+**Query Parameters**
+- `flag` (optional): The starting flag for the action segment.
+
+**Behavior**
+- Functions identically to layout history:
+    - No flag: Actions from latest back to most recent flag.
+    - Flag provided: Actions from that flag forward to the next flag.
+
+**Response**
+Returns an array of customer action objects.
+
+#### `POST /api/CustomerAction`
+Saves a user interaction event.
+
+**Request Body**
+```json
+{
+  "actionType": "CLICK",
+  "actionSubject": "p1",
+  "sessionId": "...",
+  ...
+}
+```
