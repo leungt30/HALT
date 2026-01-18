@@ -8,7 +8,7 @@ class StoreConnector:
 
     def fetch_current_layout(self):
         try:
-            response = self.session.get(f"{self.api_url}api/layout")
+            response = self.session.get(f"{self.api_url}api/layout", timeout=10)
             response.raise_for_status()
             return response.json()
         except requests.exceptions.RequestException as e:
@@ -21,7 +21,8 @@ class StoreConnector:
         try:
             response = self.session.post(
                 f"{self.api_url}api/layout",
-                json=new_layout
+                json=new_layout,
+                timeout=10
             )
             response.raise_for_status()
             return response.json()
@@ -33,7 +34,8 @@ class StoreConnector:
         try:
             response = self.session.post(
                 f"{self.api_url}api/flags",
-                json={"flag": flag_value}
+                json={"flag": flag_value},
+                timeout=10
             )
             response.raise_for_status()
             return response.json()
@@ -43,7 +45,7 @@ class StoreConnector:
 
     def get_layout_history(self):
         try:
-            response = self.session.get(f"{self.api_url}api/layouts/history")
+            response = self.session.get(f"{self.api_url}api/layouts/history", timeout=10)
             response.raise_for_status()
             return response.json()
         except requests.exceptions.RequestException as e:

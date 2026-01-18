@@ -13,7 +13,7 @@ dotenv.load_dotenv()
 
 MODEL_API_KEY = os.environ.get("API_KEY")
 API_URL = "https://api.halt-hack.tech/"
-LOCAL_API_URL = "http://localhost:8080/"
+LOCAL_API_URL = "https://api.halt-hack.tech/"
 
 # Function to prompt the AI model using Gemini API
 def get_ai_instructions(ai_client, prompt):
@@ -36,10 +36,18 @@ def retry_get_ai_instructions(ai_client, prompt, retries=3):
             response = ai_client.models.generate_content(
                 model="gemini-3-flash-preview", contents=prompt
             )
-            return json.loads(response.text)  # Convert the response to JSON
+            # Handle potential markdown code blocks in response
+            text = response.text
+            if text.startswith("```json"):
+                text = text[7:]
+            if text.endswith("```"):
+                text = text[:-3]
+            text = text.strip()
+            
+            return json.loads(text)  # Convert the response to JSON
         except json.JSONDecodeError as e:
-            logger.error("Attempt %d: Failed to decode AI response as JSON: %s", attempt + 1, str(e))
-        except requests.exceptions.RequestException as e:
+            logger.error("Attempt %d: Failed to decode AI response as JSON: %s. Response: %s", attempt + 1, str(e), response.text[:100])
+        except Exception as e:
             logger.error("Attempt %d: Error communicating with Gemini API: %s", attempt + 1, str(e))
 
         logger.info("Retrying layout generation (Attempt %d/%d)...", attempt + 1, retries)
@@ -47,81 +55,140 @@ def retry_get_ai_instructions(ai_client, prompt, retries=3):
     logger.error("All attempts to generate a valid layout have failed.")
     return None
 
-# Pulling logic for customer session data
-def wait_for_customer_sessions(timeout=300, interval=20):
-    """
-    Waits for customer session data to be collected.
-    This is a placeholder function and should be replaced with actual logic to check for session data.
-    """
-    logger.info("Waiting for customer session data...")
-    start_time = time.time()
-    while time.time() - start_time < timeout:
+# Function to trigger customer simulations
+def run_customer_simulation_batch(count=3):
+    try:
+        # Assuming customer-ai-agent is running on port 8000
+        response = requests.post(
+            "http://localhost:8000/simulate",
+            json={"count": count},
+            headers={"Content-Type": "application/json"},
+            timeout=600 # Wait up to 10 mins for batch to complete (browsers can be slow)
+        )
+        if response.status_code == 200:
+            return response.json()
+        else:
+            logger.error(f"Simulation failed: {response.text}")
+            return None
+    except Exception as e:
+        logger.error(f"Error triggering simulation: {e}")
+        return None
+
+def analyze_results(sim_results):
+    if not sim_results or "results" not in sim_results:
+        return 0, "No results"
+    
+    total_score = 0
+    feedback_lines = []
+    count = 0
+    
+    for res in sim_results["results"]:
         try:
-            response = requests.get(f"{LOCAL_API_URL}/customer_sessions")
-            if response.status_code == 200:
-                sessions = response.json()
-                if sessions:  # Check if there is any session data
-                    logger.info("Customer session data collected: %s", sessions)
-                    return sessions
+            # Feedback needs careful parsing if it's a string
+            fb_raw = res.get("feedback")
+            # If the agent returned a stringified JSON, parse it
+            if isinstance(fb_raw, str):
+                try:
+                    fb = json.loads(fb_raw)
+                except:
+                    # Fallback if it's just a text blob (which shouldn't happen with our strict prompt)
+                    fb = {"user_satisfaction": 0} 
             else:
-                logger.warning("Failed to fetch customer sessions: %s", response.text)
-        except requests.exceptions.RequestException as e:
-            logger.error("Error while polling customer sessions: %s", str(e))
-        
-        logger.info("No customer session data yet. Retrying in %d seconds...", interval)
-        time.sleep(interval)
+                fb = fb_raw
+            
+            # Clean up score (might be "8" or "8/10")
+            score_str = str(fb.get("user_satisfaction", "0")).split("/")[0].strip()
+            try:
+                score = float(score_str)
+            except:
+                score = 0
+                
+            total_score += score
+            count += 1
+            
+            persona = res.get("persona")
+            friction = fb.get("primary_friction_point", "N/A")
+            liked = fb.get("liked_features", "N/A")
+            exit_reason = fb.get("reason_for_exit", "N/A")
+            
+            feedback_lines.append(f"- Customer ({persona}): Score {score}/10. Friction: {friction}. Liked: {liked}. Exit: {exit_reason}")
+            
+        except Exception as e:
+            logger.error(f"Error parsing feedback for one result: {e}")
+            continue
 
-    logger.error("Timeout reached while waiting for customer session data.")
-    return None
-
+    avg_score = total_score / count if count > 0 else 0
+    return avg_score, "\n".join(feedback_lines)
 
 def main():
     # Initialize the AI client and store connector
-    store_manager_agent = genai.Client()
+    api_key = os.environ.get("GOOGLE_API_KEY") or os.environ.get("API_KEY")
+    store_manager_agent = genai.Client(api_key=api_key)
     store_connector = StoreConnector(API_URL)
 
-    # Fetch the current layout from the backend
-    current_layout = store_connector.fetch_current_layout()
-    if not current_layout:
-        logger.error("Failed to fetch the current layout.")
-        return
-    logger.info("Current Layout: %s", current_layout)
+    # Main Optimization Loop
+    iteration = 0
+    max_iterations = 5 # Safety break
+    
+    logger.info("🚀 Starting Store Optimization Loop")
 
-    # Wait for customer session data to be collected
-    customer_data = wait_for_customer_sessions()
-    if not customer_data:
-        logger.error("Failed to collect customer session data. Exiting.")
-        return
-    logger.info("Customer Session Data: %s", customer_data)
+    while iteration < max_iterations:
+        iteration += 1
+        logger.info(f"--- Iteration {iteration} of {max_iterations} ---")
+        
+        # 0. Fetch Current Layout
+        current_layout = store_connector.fetch_current_layout()
+        if not current_layout: 
+            logger.error("Could not fetch layout. Retrying in 5s...")
+            time.sleep(5)
+            continue
 
-    # Generate a prompt with the current layout
-    prompt = get_prompt(current_layout)
-    new_layout = retry_get_ai_instructions(store_manager_agent, prompt)
-    if not new_layout:
-        logger.error("Failed to generate a valid layout after retries.")
-        return
-
-    logger.info("AI Suggested Layout: %s", new_layout)
-
-    # Ensure the new layout is a JSON object
-    if isinstance(new_layout, dict) or isinstance(new_layout, list):
-        logger.info("The new layout is a valid JSON object.")
-    else:
-        try:
-            new_layout = json.loads(new_layout)  # Attempt to convert the string to JSON
-            logger.info("The new layout string was successfully converted to a JSON object.")
-        except json.JSONDecodeError as e:
-            logger.error("Failed to convert the new layout string to JSON: %s", str(e))
-            return
-
-    update_response = store_connector.update_layout(new_layout)
-    if update_response and update_response.get("success"):
-        logger.info("Layout updated successfully.")
-    else:
-        logger.error("Failed to update the layout.")
-
-    # Dump the new layout to a JSON file for testing
-    # dump_layout_to_file(new_layout)
+        # 1. Set Flag
+        flag_name = f"Iteration {iteration}"
+        logger.info(f"🚩 Setting Flag: {flag_name}")
+        store_connector.set_flag(flag_name)
+        
+        # 2. Run Simulation (Wait for feedback)
+        logger.info("👥 Sending 3 customers to browse store...")
+        sim_results = run_customer_simulation_batch(count=3)
+        
+        if not sim_results:
+            logger.error("Simulation failed. Aborting loop.")
+            break
+            
+        # 3. Analyze Feedback
+        avg_score, feedback_summary = analyze_results(sim_results)
+        logger.info(f"📊 Iteration {iteration} Results: Avg Score = {avg_score:.2f}/10")
+        logger.info(f"📝 Customer Feedback Summary:\n{feedback_summary}")
+        
+        # 4. Success Check
+        if avg_score > 8.0:
+            logger.info("✅ Target Score (> 8.0) Reached! Stopping optimization.")
+            logger.info("🎉 Opening the FINAL OPTIMIZED LAYOUT in your browser...")
+            import webbrowser
+            webbrowser.open("https://halt-hack.tech/")
+            break
+        
+        logger.info("❌ Score too low. Generating improvements...")
+        
+        # 5. Optimize Layout
+        prompt = get_optimization_prompt(current_layout, feedback_summary, avg_score)
+        new_layout = retry_get_ai_instructions(store_manager_agent, prompt)
+        
+        if not new_layout:
+            logger.error("Failed to generate new layout.")
+            continue
+            
+        # 6. Update Layout
+        logger.info("💾 Updating Store Layout...")
+        update_result = store_connector.update_layout(new_layout)
+        if update_result:
+            logger.info("Layout updated successfully.")
+        else:
+            logger.error("Layout update failed.")
+        
+        logger.info("Waiting 5 seconds before next iteration...")
+        time.sleep(5)
 
 if __name__ == "__main__":
     main()
