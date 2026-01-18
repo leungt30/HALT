@@ -114,7 +114,7 @@ async def run_customer_simulation(persona_override=None, headless=False, window_
     """
 
     initial_actions = [
-        {'navigate': {'url': 'https://halt-hack.tech/', 'new_tab': False}},
+        {'navigate': {'url': 'https://halt-frontend.vercel.app/', 'new_tab': False}},
     ]
 
     # Calculate Window Position for Tiling

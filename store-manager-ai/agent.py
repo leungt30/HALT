@@ -12,8 +12,8 @@ import dotenv
 dotenv.load_dotenv()
 
 MODEL_API_KEY = os.environ.get("API_KEY")
-API_URL = "https://api.halt-hack.tech/"
-LOCAL_API_URL = "https://api.halt-hack.tech/"
+API_URL = "https://halt-backend.vercel.app/"
+LOCAL_API_URL = "https://halt-backend.vercel.app/"
 
 # Function to prompt the AI model using Gemini API
 def get_ai_instructions(ai_client, prompt):
@@ -74,7 +74,29 @@ def run_customer_simulation_batch(count=3):
         logger.error(f"Error triggering simulation: {e}")
         return None
 
-def analyze_results(sim_results):
+FEEDBACK_SERVER_URL = "http://localhost:8001/feedback"
+
+def send_feedback(persona, score, friction, liked, exit_reason, iteration=0):
+    """Send feedback to the display server."""
+    try:
+        logger.info(f"📤 Sending feedback to display: {persona} ({score}/10)")
+        resp = requests.post(
+            FEEDBACK_SERVER_URL,
+            json={
+                "persona": persona,
+                "score": score,
+                "friction": friction,
+                "liked": liked,
+                "exit_reason": exit_reason,
+                "iteration": iteration
+            },
+            timeout=2
+        )
+        logger.info(f"📤 Feedback sent: {resp.status_code}")
+    except Exception as e:
+        logger.warning(f"⚠️ Could not send feedback to display: {e}")
+
+def analyze_results(sim_results, iteration=0):
     if not sim_results or "results" not in sim_results:
         return 0, "No results"
     
@@ -86,15 +108,27 @@ def analyze_results(sim_results):
         try:
             # Feedback needs careful parsing if it's a string
             fb_raw = res.get("feedback")
+            
+            # Skip if no feedback at all
+            if fb_raw is None:
+                logger.warning(f"Skipping customer with no feedback data")
+                continue
+                
             # If the agent returned a stringified JSON, parse it
             if isinstance(fb_raw, str):
                 try:
                     fb = json.loads(fb_raw)
                 except:
                     # Fallback if it's just a text blob (which shouldn't happen with our strict prompt)
-                    fb = {"user_satisfaction": 0} 
+                    logger.warning(f"Could not parse feedback JSON")
+                    continue
             else:
                 fb = fb_raw
+            
+            # Skip if feedback is empty or malformed
+            if not fb or not isinstance(fb, dict):
+                logger.warning(f"Skipping malformed feedback")
+                continue
             
             # Clean up score (might be "8" or "8/10")
             score_str = str(fb.get("user_satisfaction", "0")).split("/")[0].strip()
@@ -102,14 +136,23 @@ def analyze_results(sim_results):
                 score = float(score_str)
             except:
                 score = 0
+            
+            # Skip entries with 0 score AND no friction (indicates failed simulation)
+            friction = fb.get("primary_friction_point", "")
+            if score == 0 and (not friction or friction == "N/A"):
+                logger.warning(f"Skipping incomplete feedback (score 0, no friction)")
+                continue
                 
             total_score += score
             count += 1
             
-            persona = res.get("persona")
-            friction = fb.get("primary_friction_point", "N/A")
-            liked = fb.get("liked_features", "N/A")
+            persona = res.get("persona", "Unknown")
+            liked = fb.get("liked_features", [])
             exit_reason = fb.get("reason_for_exit", "N/A")
+            friction = friction if friction else "N/A"
+            
+            # Send to feedback display window with iteration context
+            send_feedback(persona, score, friction, liked, exit_reason, iteration)
             
             feedback_lines.append(f"- Customer ({persona}): Score {score}/10. Friction: {friction}. Liked: {liked}. Exit: {exit_reason}")
             
@@ -161,7 +204,7 @@ def main():
         logger.info(f"Retrieved customer actions: {json.dumps(customer_actions, indent=2)}")
         
         # 4. Analyze Feedback
-        avg_score, feedback_summary = analyze_results(sim_results)
+        avg_score, feedback_summary = analyze_results(sim_results, iteration)
         logger.info(f"📊 Iteration {iteration} Results: Avg Score = {avg_score:.2f}/10")
         logger.info(f"📝 Customer Feedback Summary:\n{feedback_summary}")
         
@@ -170,7 +213,7 @@ def main():
             logger.info("✅ Target Score (> 8.0) Reached! Stopping optimization.")
             logger.info("🎉 Opening the FINAL OPTIMIZED LAYOUT in your browser...")
             import webbrowser
-            webbrowser.open("https://halt-hack.tech/")
+            webbrowser.open("https://halt-frontend.vercel.app/")
             break
         
         logger.info("❌ Score too low. Generating improvements...")
