@@ -394,34 +394,34 @@ Planned enhancements include:
 
 ## 👥 Team
 
-HALT was built by a passionate team at **UofTHacks 13**:
+HALT was built by our passionate team at **UofTHacks 13**:
 
 <table>
   <tr>
     <td align="center">
       <a href="https://devpost.com/leungt30">
-        <img src="https://ui-avatars.com/api/?name=Timothy+Leung&size=80&background=4285F4&color=fff" alt="Timothy Leung"/><br />
+        <img src="https://avatars.githubusercontent.com/u/105022131?type=square&v=4" alt="Timothy Leung" width="80"/><br />
         <b>Timothy Leung</b>
       </a><br />
       <sub>CS @ Mac</sub>
     </td>
     <td align="center">
       <a href="https://devpost.com/loicwedji">
-        <img src="https://ui-avatars.com/api/?name=Loic+Wedji&size=80&background=DB4437&color=fff" alt="Loic Wedji"/><br />
+        <img src="https://lh3.googleusercontent.com/a/ACg8ocLYhfpQzrCDTtn2vvzkHHciX_FUlljgM5ZUYTvUt3h70Q5C68M=s96-c?type=square" alt="Loic Wedji" width="80"/><br />
         <b>Loic Wedji</b>
       </a><br />
       <sub>CS @ Brock</sub>
     </td>
     <td align="center">
       <a href="https://devpost.com/hilaryhe1012">
-        <img src="https://ui-avatars.com/api/?name=Hilary+He&size=80&background=F4B400&color=fff" alt="Hilary He"/><br />
+        <img src="https://lh3.googleusercontent.com/a/ACg8ocIpZFtUWBZao6G4F665LpOgCWujGsx6MuvcyD6Dtw77i_C3PuCE=s96-c?type=square" alt="Hilary He" width="80"/><br />
         <b>Hilary He</b>
       </a><br />
       <sub>DevOps @ RBC | CS @ Mac</sub>
     </td>
     <td align="center">
       <a href="https://devpost.com/alaqmargandhi">
-        <img src="https://ui-avatars.com/api/?name=Alaqmar+Gandhi&size=80&background=0F9D58&color=fff" alt="Alaqmar Gandhi"/><br />
+        <img src="https://d112y698adiu2z.cloudfront.net/photos/production/user_photos/004/169/934/datas/profile.jpg" alt="Alaqmar Gandhi" width="80"/><br />
         <b>Alaqmar Gandhi</b>
       </a><br />
       <sub>DevOps @ RBC | CS @ BrockU</sub>
